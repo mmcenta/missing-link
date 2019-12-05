@@ -1,6 +1,6 @@
 import re
 
-from preprocessor.cleaner import Cleaner
+from .cleaner import Cleaner
 
 
 class FullTokenizer:
