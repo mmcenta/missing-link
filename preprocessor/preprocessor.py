@@ -114,7 +114,7 @@ class Preprocessor:
 
         # Train an incremental PCA algorithm on the sparse data
         sparce_embeddings = self.spca.fit_transform(self.tfidf_embeddings)
-        self.reduce_tfidf_embeddings = sparce_embeddings.to_dense()
+        self.reduce_tfidf_embeddings = sparce_embeddings.toarray()
 
         print('Finished dimentionality reduction on tf-idf embeddings.')
         print('Begin saving...')
