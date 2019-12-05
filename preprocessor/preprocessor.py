@@ -1,7 +1,7 @@
 import os
 import pickle
 from tqdm import tqdm
-from sklearn.decomposition import IncrementalPCA
+from sklearn.decomposition import SparsePCA
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from .tokenizer import FullTokenizer
@@ -51,7 +51,7 @@ class Preprocessor:
         self.tfidf_vectorizer = TfidfVectorizer(input='content',
                                                 encoding='utf-8',
                                                 lowercase=True)
-        self.ipca = IncrementalPCA(n_components=200)
+        self.spca = SparsePCA(n_components=200)
 
     def tokenize_all(self):
         print('Begin tokenizing files...')
@@ -113,14 +113,15 @@ class Preprocessor:
         print('Begin dimentionality reduction on tf-idf embeddings...')
 
         # Train an incremental PCA algorithm on the sparse data
-        self.reduced_tfidf_embeddings = self.ipca.fit_transform(self.tfidf_embeddings)
-
-        # Save the reduced embeddings and the IPCA object
-        ipca_file = os.path.join(self.NODES_PATH, "ipca.pickle")
-        save_object(self.ipca, ipca_file)
+        sparce_embeddings = self.spca.fit_transform(self.tfidf_embeddings)
+        self.reduce_tfidf_embeddings = sparce_embeddings.to_dense()
 
         print('Finished dimentionality reduction on tf-idf embeddings.')
         print('Begin saving...')
+
+        # Save the reduced embeddings and the IPCA object
+        spca_file = os.path.join(self.NODES_PATH, "spca.pickle")
+        save_object(self.spca, spca_file)
 
         reduced_emb_file = os.path.join(self.NODES_PATH, "reduced_tfidf_emb.pickle")
         save_object(self.reduced_tfidf_embeddings, reduced_emb_file)
