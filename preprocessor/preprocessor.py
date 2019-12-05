@@ -113,8 +113,7 @@ class Preprocessor:
         print('Begin dimentionality reduction on tf-idf embeddings...')
 
         # Train an incremental PCA algorithm on the sparse data
-        sparce_embeddings = self.tsvd.fit_transform(self.tfidf_embeddings)
-        self.reduce_tfidf_embeddings = sparce_embeddings.toarray()
+        self.reduce_tfidf_embeddings =  self.tsvd.fit_transform(self.tfidf_embeddings)
 
         print('Finished dimentionality reduction on tf-idf embeddings.')
         print('Begin saving...')
