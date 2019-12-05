@@ -4,7 +4,7 @@ from tqdm import tqdm
 from sklearn.decomposition import IncrementalPCA
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from preprocessor.tokenizer import FullTokenizer
+from .tokenizer import FullTokenizer
 
 def load_all_files(data_filepath):
     def _count_files(dir_path):
