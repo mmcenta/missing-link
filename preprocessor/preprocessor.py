@@ -28,7 +28,7 @@ def load_all_files(data_filepath):
 
 
 def save_object(obj, path):
-    with open(path, 'w', encoding='utf-8') as f:
+    with open(path, 'wb') as f:
         pickle.dump(obj, f)
 
 
