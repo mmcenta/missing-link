@@ -1,9 +1,9 @@
 import numpy as np
 import networkx as nx
-from sklearn.base import TransformerMixin
+from sklearn.base import BaseEstimator, TransformerMixin
     
 
-class GraphFeatureExtractor(TransformerMixin):
+class GraphFeatureExtractor(BaseEstimator, TransformerMixin):
     def __init__(self):
         pass
 

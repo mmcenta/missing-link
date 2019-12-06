@@ -1,7 +1,7 @@
 import os
 import pickle
 import numpy as np
-from sklearn.base import TransformerMixin
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.metrics.pairwise import cosine_similarity
 
 
@@ -46,7 +46,7 @@ class UrlMatcher:
         return matches
     
 
-class TextFeatureExtractor(TransformerMixin):
+class TextFeatureExtractor(BaseEstimator, TransformerMixin):
     def __init__(self, data_path="./data"):
         self.data_path = data_path
 
