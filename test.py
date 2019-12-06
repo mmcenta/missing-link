@@ -38,7 +38,7 @@ if __name__ == "__main__":
     X = np.array(transformed)
 
     # Load model
-    with open('.models/basic_xbb.pickle', 'eb') as f:
+    with open('./models/basic_xgb.pickle', 'rb') as f:
         model = pickle.load(f)
 
     # Predict
@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     predictions = enumerate(predictions)
     # Write the output in the format required by Kaggle
-    with open("xbb_predictions.csv", "w") as f:
+    with open("xgb_predictions.csv", "w") as f:
         csv_out = csv.writer(f)
         csv_out.writerow(['id','predicted'])
         for idx, label in predictions:
