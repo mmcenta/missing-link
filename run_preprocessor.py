@@ -2,8 +2,8 @@ import numpy as np
 from preprocessor.preprocessor import Preprocessor
 
 if __name__ == "__main__":
-    p = Preprocessor()
-    p.preprocess()
+    # p = Preprocessor()
+    # p.preprocess()
 
     print("Generating edge list...")
 
@@ -17,10 +17,10 @@ if __name__ == "__main__":
     
     with open("./data/edges.txt", "w") as f:
         for e in edges:
-            f.write(e[0], ' ', e[1], '\n')
+            f.write(e[0] + ' ' + e[1] + '\n')
     
     with open("./data/labels.txt", "w") as f:
         for l in labels:
-            f.write(l, '\n')
+            f.write(l + '\n')
 
     print("Finished generating edge list.")
