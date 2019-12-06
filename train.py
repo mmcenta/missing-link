@@ -21,12 +21,12 @@ if __name__ == "__main__":
     with open("./data/node_information/deepwalk.embeddings", "r") as f:
         num_nodes, dim = tuple(map(int, f.readline().split()))
 
-        graph_emb = np.zeros((num_nodes, dim))
+        graph_emb = dict()
         for line in f:
             line = line.split()
             node = int(line[0])
             emb = np.array(list(map(float, line[1:])))
-            graph_emb[node, :] = emb
+            graph_emb[node] = emb
     
     # Load training data
     X, y = [], []
