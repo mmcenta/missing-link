@@ -58,4 +58,4 @@ if __name__ == "__main__":
     #print('Best Parameters:\n' + str(rsearch.best_params_))
     with open('./models/basic_xgb.pickle', 'wb') as f:
     #    pickle.dump(f, rsearch.best_estimator_)
-        pickle.dump(f, model)
+        pickle.dump(model, f)
