@@ -35,7 +35,7 @@ if __name__ == "__main__":
             line = line.split()
             X.append([int(line[0]), int(line[1])])
             y.append([int(line[2])])
-    X, y = np.array(X), np.array(y)
+    X, y = np.array(X), np.array(y).ravel()
 
     # Transform data using the embeddings
     transformed = []
@@ -48,8 +48,8 @@ if __name__ == "__main__":
 
     print('Begin training...')
 
-    model = XGBClassifier(n_workers=16)
-    rsearch = GridSearchCV(model, params, cv=3, verbose=2)
+    model = XGBClassifier(n_workers=4)
+    rsearch = GridSearchCV(model, params, n_jobs=-1, cv=3, verbose=2)
 
     rsearch.fit(X, y)
 
