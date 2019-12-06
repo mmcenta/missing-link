@@ -21,7 +21,7 @@ pipeline = Pipeline([
 params = {
     'classifier__max_depth': [2, 3, 5],
     'classifier__num_estimators': [10, 100, 500],
-    'classifier__learning_rate': [0.01, 0.1, 0.2, 0.3, 1.0],
+    'classifier__learning_rate': [0.01, 0.1, 0.3, 1.0],
     'classifier__reg_alpha': [0, 1.0]
 }
 
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     X = np.array(X)
     y = np.array(y)
 
-    rsearch = GridSearchCV(pipeline, params, cv=5, verbose=2)
+    rsearch = GridSearchCV(pipeline, params, cv=3, verbose=2)
 
     rsearch.fit(X, y)
 
