@@ -48,9 +48,11 @@ if __name__ == "__main__":
 
     print('Begin training...')
 
-    model = XGBClassifier(n_workers=4)
+    #model = XGBClassifier(n_workers=4)
     #rsearch = GridSearchCV(model, params, n_jobs=-1, cv=3, verbose=2)
     #rsearch.fit(X, y)
+
+    model = XGBClassifier(n_workers=16)
     model.fit(X, y)
 
     #print('Best Parameters:\n' + str(rsearch.best_params_))
