@@ -41,8 +41,8 @@ if __name__ == "__main__":
     transformed = []
     for x in X:
         src, tgt = tuple(map(int, x))
-        x_transformed = np.concatenate([text_emb[src], graph_emb[src],
-                                        text_emb[src], graph_emb[src]], axis=None)
+        x_transformed = np.concatenate([text_emb[src], graph_emb.get(src, np.zeros((dim,))),
+                                        text_emb[tgt], graph_emb.get(tgt, np.zeros((dim,)))], axis=None)
         transformed.append(x_transformed)
     X = np.array(transformed)
 
