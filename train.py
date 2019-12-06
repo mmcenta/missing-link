@@ -1,42 +1,41 @@
 import pickle
 import numpy as np
 from xgboost.sklearn import XGBClassifier
-from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.model_selection import KFold, GridSearchCV
 
-from feature_extractors.text import TextFeatureExtractor
-from feature_extractors.graph import GraphFeatureExtractor
 
-
-transformers = [
-    ('graph_feats', GraphFeatureExtractor()),
-    ('text_feats', TextFeatureExtractor())
-]
-    
-pipeline = Pipeline([
-    ('feat_union', FeatureUnion(transformers, n_jobs=4)),
-    ('classifier', XGBClassifier(n_jobs=4, tree_method='gpu_hist'))
-])
-    
 params = {
-    'classifier__max_depth': [2, 3, 5],
-    'classifier__num_estimators': [10, 100, 500],
-    'classifier__learning_rate': [0.01, 0.1, 0.3, 1.0],
-    'classifier__reg_alpha': [0, 1.0]
+    'max_depth': [2, 3, 5],
+    'num_estimators': [10, 100, 500],
+    'learning_rate': [0.01, 0.1, 0.3, 1.0],
+    'reg_alpha': [0, 1.0]
 }
 
 
 if __name__ == "__main__":
-    X, y = [], []
-    with open("./data/training.txt", "r") as f:
+    with open("./data/node_information/reduced_tfidf_emb.pickle", "rb") as f:
+        text_emb = pickle.load(f)
+    
+    with open("./data/node_information/deepwalk.embeddings", "r") as f:
+        num_nodes, dim = tuple(map(int, f.readline().split()))
+
+        graph_emb = np.zeros((num_nodes, dim))
         for line in f:
             line = line.split()
-            X.append([int(line[0]), int(line[1])])
-            y.append(int(line[2]))
-    X = np.array(X)
+            node = int(line[0])
+            emb = np.array(list(map(float, line[1:])))
+            graph_emb[node, :] = emb
+    
+    X = np.concatenate(text_emb, graph_emb, axis=1)
+
+    y = []
+    with open("./data/labels.txt", "r") as f:
+        for line in f:
+            y.append(float(line))
     y = np.array(y)
 
-    rsearch = GridSearchCV(pipeline, params, cv=3, verbose=2)
+    model = XGBClassifier(n_workers=15)
+    rsearch = GridSearchCV(model, params, cv=3, verbose=2)
 
     rsearch.fit(X, y)
 
