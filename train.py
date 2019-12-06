@@ -49,10 +49,11 @@ if __name__ == "__main__":
     print('Begin training...')
 
     model = XGBClassifier(n_workers=4)
-    rsearch = GridSearchCV(model, params, n_jobs=-1, cv=3, verbose=2)
+    #rsearch = GridSearchCV(model, params, n_jobs=-1, cv=3, verbose=2)
+    #rsearch.fit(X, y)
+    model.fit(X, y)
 
-    rsearch.fit(X, y)
-
-    print('Best Parameters:\n' + str(rsearch.best_params_))
+    #print('Best Parameters:\n' + str(rsearch.best_params_))
     with open('.models/basic_xbb.pickle', 'wb') as f:
-        pickle.dump(f, rsearch.best_estimator_)
+    #    pickle.dump(f, rsearch.best_estimator_)
+        pickle.dump(f, model)
