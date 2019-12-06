@@ -13,9 +13,11 @@ params = {
 
 
 if __name__ == "__main__":
+    # Load text embeddigns
     with open("./data/node_information/reduced_tfidf_emb.pickle", "rb") as f:
         text_emb = pickle.load(f)
     
+    # Load graph (deepwalk) embeddings
     with open("./data/node_information/deepwalk.embeddings", "r") as f:
         num_nodes, dim = tuple(map(int, f.readline().split()))
 
@@ -26,15 +28,27 @@ if __name__ == "__main__":
             emb = np.array(list(map(float, line[1:])))
             graph_emb[node, :] = emb
     
-    X = np.concatenate(text_emb, graph_emb, axis=1)
-
-    y = []
-    with open("./data/labels.txt", "r") as f:
+    # Load training data
+    X, y = [], []
+    with open("./data/training.txt", "r") as f:
         for line in f:
-            y.append(float(line))
-    y = np.array(y)
+            line = line.split()
+            X.append([int(line[0]), int(line[1])])
+            y.append([int(line[2])])
+    X, y = np.array(X), np.array(y)
 
-    model = XGBClassifier(n_workers=15)
+    # Transform data using the embeddings
+    transformed = []
+    for x in X:
+        src, tgt = tuple(map(int, x))
+        x_transformed = np.concatenate([text_emb[src], graph_emb[src],
+                                        text_emb[src], graph_emb[src]], axis=None)
+        transformed.append(x_transformed)
+    X = np.array(transformed)
+
+    print('Begin training...')
+
+    model = XGBClassifier(n_workers=16)
     rsearch = GridSearchCV(model, params, cv=3, verbose=2)
 
     rsearch.fit(X, y)
