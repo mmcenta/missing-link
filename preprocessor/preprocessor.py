@@ -51,7 +51,7 @@ class Preprocessor:
         self.tfidf_vectorizer = TfidfVectorizer(input='content',
                                                 encoding='utf-8',
                                                 lowercase=True)
-        self.tsvd = TruncatedSVD(n_components=256)
+        self.tsvd = TruncatedSVD(n_components=64)
 
     def tokenize_all(self):
         print('Begin tokenizing files...')
