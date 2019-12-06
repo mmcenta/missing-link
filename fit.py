@@ -10,7 +10,7 @@ from feature_extractors.graph import GraphFeatureExtractor
 
 transformers = [
     ('graph_feats', GraphFeatureExtractor()),
-    ('text_feats', TextFeatureExtractor())
+    # ('text_feats', TextFeatureExtractor())
 ]
     
 pipeline = Pipeline([

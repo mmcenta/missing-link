@@ -54,6 +54,8 @@ class TextFeatureExtractor(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
+        print('Starting text feature extraction...')
+
         tokens_path = os.path.join(self.data_path, "tokens")
         tokens = load_files(tokens_path)
 
@@ -84,5 +86,7 @@ class TextFeatureExtractor(BaseEstimator, TransformerMixin):
             f = np.array(f)
 
             features.append(f)
+
+        print('Finished text feature extraction.')
 
         return np.array(features)

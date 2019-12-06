@@ -11,6 +11,8 @@ class GraphFeatureExtractor(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
+        print('Starting graph feature extraction...')
+
         G = nx.Graph()
         edge_to_idx = {}
         for i, x in enumerate(X):
@@ -33,5 +35,7 @@ class GraphFeatureExtractor(BaseEstimator, TransformerMixin):
                 if (u, v) in edge_to_idx:
                     idx = edge_to_idx[(u, v)]
                     features[idx, i] = p
+
+        print('Finished graph feature extraction.')
         
         return features
