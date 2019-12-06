@@ -1,3 +1,4 @@
+import pickle
 import numpy as np
 from xgboost.sklearn import XGBClassifier
 from sklearn.pipeline import Pipeline, FeatureUnion
@@ -18,9 +19,9 @@ pipeline = Pipeline([
 ])
     
 params = {
-    'classifier__max_depth': [2, 3, 5, 7, 10],
-    'classifier__num_estimators': [10, 100, 500, 700, 1000],
-    'classifier__learning_rate': [0.001, 0.01, 0.1, 0.2, 0.3, 1.0],
+    'classifier__max_depth': [2, 3, 5],
+    'classifier__num_estimators': [10, 100, 500],
+    'classifier__learning_rate': [0.01, 0.1, 0.2, 0.3, 1.0],
     'classifier__reg_alpha': [0, 1.0]
 }
 
@@ -38,3 +39,7 @@ if __name__ == "__main__":
     rsearch = GridSearchCV(pipeline, params, cv=5, verbose=2)
 
     rsearch.fit(X, y)
+
+    print('Best Parameters:\n' + str(rsearch.best_params_))
+    with open('.models/basic_xbb.pickle', 'wb') as f:
+        pickle.dump(f, rsearch.best_estimator_)
