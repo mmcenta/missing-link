@@ -26,7 +26,7 @@ def train(config):
     train_set = xgb.DMatrix(train_X, label=train_y)
     val_set = xgb.DMatrix(val_X, label=val_y)
 
-    model = xgb.train(config, train_set, early_stopping_rounds=10, evals=[(val_set, "eval")], verbose_eval=True, callbacks=[XGBCallback])
+    model = xgb.train(config, train_set, early_stopping_rounds=10, evals=[(val_set, "eval")], callbacks=[XGBCallback])
     preds = model.predict(val_set)
     pred_labels = np.rint(preds)
     tune.track.log(mean_accuracy=accuracy_score(val_y, pred_labels), done=True)
@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     nthread = 4
     config = {
-        "verbosity": 2,
+        "verbosity": 1,
         "nthread": nthread,
         "objective": "binary:logistic",
         "booster": "gbtree",
