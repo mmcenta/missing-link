@@ -12,9 +12,9 @@ def XGBCallback(env):
 
 
 def load_dataset():
-    with open("./data/X_train.pickle", "rb") as f:
+    with open("/home/matheuscenta/missing-link/data/X_train.pickle", "rb") as f:
         X = pickle.load(f)
-    with open("./data/y_train.pickle", "rb") as f:
+    with open("/home/matheuscenta/missing-link/data/y_train.pickle", "rb") as f:
         y = pickle.load(f)
     return X, y
 
