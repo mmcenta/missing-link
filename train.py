@@ -18,7 +18,7 @@ if __name__ == "__main__":
         "objective": "binary:logistic",
         "booster": "gbtree",
         "tree_method": "hist",
-        "eval_metric": ["auc", "ams@0", "logloss"],
+        "eval_metric": ["auc"],
         "max_depth": 3,
         "eta": 0.01,
         "gamma": 1,
