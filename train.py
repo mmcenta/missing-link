@@ -24,7 +24,7 @@ if __name__ == "__main__":
         "gamma": 1,
         "colsample_bytree": 1,
         "grow_policy": "depthwise", # "lossguide",
-        "num_parallel_tree": 10,
+        "num_parallel_tree": 100,
     }
     X, y = load_dataset()
 
