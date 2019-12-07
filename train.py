@@ -49,7 +49,7 @@ if __name__ == "__main__":
     print('Begin training...')
 
     model = XGBClassifier(n_workers=4, learning_rate=0.01, n_estimators=100, max_depth=3, subsample=0.8, colsample_bytree=1, gamma=1)
-    rsearch = GridSearchCV(model, params, n_jobs=8, cv=3, verbose=2)
+    rsearch = GridSearchCV(model, params, n_jobs=6, cv=3, verbose=2)
     rsearch.fit(X, y)
 
     # model = XGBClassifier(n_workers=16)
