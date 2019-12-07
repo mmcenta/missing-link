@@ -1,15 +1,8 @@
 import pickle
 import numpy as np
 import xgboost as xgb
-from ray import tune
-from ray.tune.schedulers import ASHAScheduler
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-
-
-def XGBCallback(env):
-    tune.track.log(**dict(env.evaluation_result_list))
-
 
 def load_dataset():
     with open("/home/matheuscenta/missing-link/data/X_train.pickle", "rb") as f:
@@ -39,10 +32,10 @@ if __name__ == "__main__":
     train_set = xgb.DMatrix(train_X, label=train_y)
     val_set = xgb.DMatrix(val_X, label=val_y)
 
-    model = xgb.train(param, train_set, early_stopping_rounds=10, evals=[(val_set, "eval")], callbacks=[XGBCallback])
+    model = xgb.train(param, train_set, early_stopping_rounds=10, evals=[(val_set, "eval")])
     preds = model.predict(val_set)
     pred_labels = np.rint(preds)
     print("accuracy:", accuracy_score(val_y, pred_labels))
 
-
-    
+    with open("./models/base.pickle", "wb") as f:
+        pickle.dump(model, f)
