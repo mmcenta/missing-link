@@ -5,10 +5,10 @@ from sklearn.model_selection import KFold, GridSearchCV
 
 
 params = {
-    'max_depth': [2, 3, 5],
-    'num_estimators': [10, 100, 500],
-    'learning_rate': [0.01, 0.1, 0.3, 1.0],
-    'reg_alpha': [0, 1.0]
+#    'max_depth': [2, 3, 5],
+    'num_estimators': [10, 100, 1000],
+#    'learning_rate': [0.01, 0.1, 0.3, 1.0],
+#    'reg_alpha': [0, 1.0]
 }
 
 
@@ -48,14 +48,14 @@ if __name__ == "__main__":
 
     print('Begin training...')
 
-    #model = XGBClassifier(n_workers=4)
-    #rsearch = GridSearchCV(model, params, n_jobs=-1, cv=3, verbose=2)
-    #rsearch.fit(X, y)
+    model = XGBClassifier(n_workers=4, learning_rate=0.01, n_estimators=100, max_depth=3, subsample=0.8, colsample_bytree=1, gamma=1)
+    rsearch = GridSearchCV(model, params, n_jobs=8, cv=3, verbose=2)
+    rsearch.fit(X, y)
 
-    model = XGBClassifier(n_workers=16)
-    model.fit(X, y)
+    # model = XGBClassifier(n_workers=16)
+    # model.fit(X, y)
 
-    #print('Best Parameters:\n' + str(rsearch.best_params_))
+    print('Best Parameters:\n' + str(rsearch.best_params_))
     with open('./models/basic_xgb.pickle', 'wb') as f:
-    #    pickle.dump(f, rsearch.best_estimator_)
-        pickle.dump(model, f)
+        pickle.dump(f, rsearch.best_estimator_)
+        #pickle.dump(model, f)
