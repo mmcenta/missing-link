@@ -18,27 +18,8 @@ def load_dataset():
         y = pickle.load(f)
     return X, y
 
-
-def train(config):
-    X, y = load_dataset()
-
-    train_X, val_X, train_y, val_y = train_test_split(X, y, test_size=0.10)
-    train_set = xgb.DMatrix(train_X, label=train_y)
-    val_set = xgb.DMatrix(val_X, label=val_y)
-
-    model = xgb.train(config, train_set, early_stopping_rounds=10, evals=[(val_set, "eval")], callbacks=[XGBCallback])
-    preds = model.predict(val_set)
-    pred_labels = np.rint(preds)
-    tune.track.log(mean_accuracy=accuracy_score(val_y, pred_labels), done=True)
-
-    return train
-
-
 if __name__ == "__main__":
-    print('Begin training...')
-
-    nthread = 4
-    config = {
+    param = {
         "verbosity": 1,
         "nthread": nthread,
         "objective": "binary:logistic",
@@ -49,15 +30,19 @@ if __name__ == "__main__":
         "eta": 0.01,
         "gamma": 1,
         "colsample_bytree": 1,
-        "grow_policy": tune.choice(["depthwise", "lossguide"]),
-        "num_parallel_tree": tune.choice([1, 10, 100, 1000])
+        "grow_policy": "depthwise", # "lossguide",
+        "num_parallel_tree": 10,
     }
+    X, y = load_dataset()
 
-    analysis = tune.run(
-                train,
-                resources_per_trial={"cpu": nthread},
-                config=config,
-                num_samples=2,
-                scheduler=ASHAScheduler(metric="eval-logloss", mode="min"))
+    train_X, val_X, train_y, val_y = train_test_split(X, y, test_size=0.10)
+    train_set = xgb.DMatrix(train_X, label=train_y)
+    val_set = xgb.DMatrix(val_X, label=val_y)
 
-    print("Best config is", analysis.get_best_config(metric="auc"))
+    model = xgb.train(param, train_set, early_stopping_rounds=10, evals=[(val_set, "eval")], callbacks=[XGBCallback])
+    preds = model.predict(val_set)
+    pred_labels = np.rint(preds)
+    print("accuracy:", accuracy_score(val_y, pred_labels))
+
+
+    
