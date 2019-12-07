@@ -24,6 +24,8 @@ def get_train_fn(X, y):
             mean_accuracy=accuracy_score(val_y, pred_labels),
             done=True)
 
+    return train
+
 
 if __name__ == "__main__":
     # Load text embeddigns
