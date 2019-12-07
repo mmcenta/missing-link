@@ -50,7 +50,7 @@ if __name__ == "__main__":
         "gamma": 1,
         "colsample_bytree": 1,
         "grow_policy": tune.choice(["depthwise", "lossguide"]),
-        "num_parallel_tree": tune.choice(1, 10, 100, 1000)
+        "num_parallel_tree": tune.choice([1, 10, 100, 1000])
     }
 
     analysis = tune.run(
