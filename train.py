@@ -21,7 +21,7 @@ def load_dataset():
 if __name__ == "__main__":
     param = {
         "verbosity": 1,
-        "nthread": nthread,
+        "nthread": 16,
         "objective": "binary:logistic",
         "booster": "gbtree",
         "tree_method": "hist",
