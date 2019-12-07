@@ -1,15 +1,28 @@
 import pickle
 import numpy as np
-from xgboost.sklearn import XGBClassifier
-from sklearn.model_selection import KFold, GridSearchCV
+import xgboost as xgb
+from ray import tune
+from ray.tune.schedulers import ASHAScheduler
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 
 
-params = {
-#    'max_depth': [2, 3, 5],
-    'num_estimators': [10, 100, 1000],
-#    'learning_rate': [0.01, 0.1, 0.3, 1.0],
-#    'reg_alpha': [0, 1.0]
-}
+def XGBCallback(env):
+    tune.track.log(**dict(env.evaluation_result_list))
+
+
+def get_train_fn(X, y):
+    train_X, val_X, train_y, val_y = train_test_split(X, y, test_size=0.10)
+    train_set = xgb.DMatrix(train_X, label=train_y)
+    val_set = xgb.DMatrix(val_X, label=val_y)
+
+    def train(config):
+        model = xgb.cv(config, train_set, nfold=3, early_stopping_rounds=10, metrics=['error', 'auc'])
+        preds = model.predict(val_set)
+        pred_labels = np.rint(preds)
+        tune.track.log(
+            mean_accuracy=accuracy_score(val_y, pred_labels),
+            done=True)
 
 
 if __name__ == "__main__":
@@ -48,14 +61,29 @@ if __name__ == "__main__":
 
     print('Begin training...')
 
-    model = XGBClassifier(n_workers=4, learning_rate=0.01, n_estimators=100, max_depth=3, subsample=0.8, colsample_bytree=1, gamma=1)
-    rsearch = GridSearchCV(model, params, n_jobs=6, cv=3, verbose=2)
-    rsearch.fit(X, y)
+    train_fn = get_train_fn(X, y)
 
-    # model = XGBClassifier(n_workers=16)
-    # model.fit(X, y)
+    nthread = 4
+    config = {
+        "verbosity": 2,
+        "nthread": nthread,
+        "objective": "binary:logistic",
+        "booster": "gbtree",
+        "tree_method": "hist",
+        "eval_metric": ["auc", "ams@0", "logloss"],
+        "max_depth": 3,
+        "eta": 0.01,
+        "gamma": 1,
+        "colsample_bytree": 1,
+        "grow_policy": tune.choice(["depthwise", "lossguide"]),
+        "num_parallel_tree": tune.choice(1, 10, 100, 1000)
+    }
 
-    print('Best Parameters:\n' + str(rsearch.best_params_))
-    with open('./models/basic_xgb.pickle', 'wb') as f:
-        pickle.dump(f, rsearch.best_estimator_)
-        #pickle.dump(model, f)
+    analysis = tune.run(
+                train_fn,
+                resources_per_trial={"cpu": nthread},
+                config=config,
+                num_samples=2,
+                scheduler=ASHAScheduler(metric="eval-logloss", mode="min"))
+
+    print("Best config is", analysis.get_best_config(metric="auc"))
