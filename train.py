@@ -32,10 +32,12 @@ if __name__ == "__main__":
     train_set = xgb.DMatrix(train_X, label=train_y)
     val_set = xgb.DMatrix(val_X, label=val_y)
 
-    model = xgb.train(param, train_set, early_stopping_rounds=10, evals=[(val_set, "eval")])
-    preds = model.predict(val_set)
-    pred_labels = np.rint(preds)
-    print("accuracy:", accuracy_score(val_y, pred_labels))
+    for t in [10, 100, 1000]:
+        param["num_parallel_tree"] = t
+        model = xgb.train(param, train_set, early_stopping_rounds=10, evals=[(val_set, "eval")])
+        preds = model.predict(val_set)
+        pred_labels = np.rint(preds)
+        print("accuracy:", accuracy_score(val_y, pred_labels))
 
     with open("./models/base.pickle", "wb") as f:
         pickle.dump(model, f)
