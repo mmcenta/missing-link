@@ -17,7 +17,7 @@ def get_train_fn(X, y):
     val_set = xgb.DMatrix(val_X, label=val_y)
 
     def train(config):
-        model = xgb.cv(config, train_set, nfold=3, early_stopping_rounds=10, metrics=['error', 'auc'])
+        model = xgb.cv(config, train_set, nfold=3, early_stopping_rounds=10, metrics=['error', 'auc'], callbacks=[XGBCallback])
         preds = model.predict(val_set)
         pred_labels = np.rint(preds)
         tune.track.log(
