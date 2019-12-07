@@ -1,40 +1,42 @@
-import csv
 import pickle
 import numpy as np
-from xgboost.sklearn import XGBClassifier
-from sklearn.pipeline import Pipeline, FeatureUnion
-
-from feature_extractors.text import TextFeatureExtractor
-from feature_extractors.graph import GraphFeatureExtractor
-
-
-transformers = [
-    ('graph_feats', GraphFeatureExtractor()),
-    ('text_feats', TextFeatureExtractor())
-]
-    
-pipeline = Pipeline([
-    ('feat_union', FeatureUnion(transformers, n_jobs=4))
-])
-
 
 if __name__ == "__main__":
+    # Load text embeddigns
+    with open("./data/node_information/reduced_tfidf_emb.pickle", "rb") as f:
+        text_emb = pickle.load(f)
+    
+    # Load graph (deepwalk) embeddings
+    with open("./data/node_information/deepwalk.embeddings", "r") as f:
+        num_nodes, dim = tuple(map(int, f.readline().split()))
+
+        graph_emb = dict()
+        for line in f:
+            line = line.split()
+            node = int(line[0])
+            emb = np.array(list(map(float, line[1:])))
+            graph_emb[node] = emb
+    
+    # Load training data
     X, y = [], []
     with open("./data/training.txt", "r") as f:
         for line in f:
             line = line.split()
             X.append([int(line[0]), int(line[1])])
-            y.append(int(line[2]))
-    X = np.array(X)
-    y = np.array(y)
+            y.append([int(line[2])])
+    X, y = np.array(X), np.array(y).ravel()
 
-    X = pipeline.fit_transform(X, y)
+    # Transform data using the embeddings
+    transformed = []
+    for x in X:
+        src, tgt = tuple(map(int, x))
+        x_transformed = np.concatenate([text_emb[src], graph_emb.get(src, np.zeros((dim,))),
+                                        text_emb[tgt], graph_emb.get(tgt, np.zeros((dim,)))], axis=None)
+        transformed.append(x_transformed)
+    X = np.array(transformed)
 
-    with open("./data/X_train.txt", "w") as f:
-        for x in X:
-            line = " ".join(list(map(str, x))) + "\n"
-            f.write(line)
-
-    with open("./data/y_train", "w") as f:
-        for e in y:
-            f.write(str(e) + "\n")
+    # Save datasets
+    with open("./data/X_train.pickle", "wb") as f:
+        pickle.dump(X, f)
+    with open("./data/y_train.pickle", "wb") as f:
+        pickle.dump(y, f)
