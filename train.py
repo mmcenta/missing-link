@@ -26,7 +26,7 @@ def train(config):
     train_set = xgb.DMatrix(train_X, label=train_y)
     val_set = xgb.DMatrix(val_X, label=val_y)
 
-    model = xgb.train(config, train_set, nfold=3, early_stopping_rounds=10, evals=[(val_set, "eval")], eval_metrics=['error', 'auc'], callbacks=[XGBCallback])
+    model = xgb.train(config, train_set, early_stopping_rounds=10, evals=[(val_set, "eval")], eval_metrics=['error', 'auc'], callbacks=[XGBCallback])
     preds = model.predict(val_set)
     pred_labels = np.rint(preds)
     tune.track.log(mean_accuracy=accuracy_score(val_y, pred_labels), done=True)
