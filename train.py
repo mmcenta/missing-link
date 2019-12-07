@@ -1,6 +1,7 @@
 import pickle
 import numpy as np
 import xgboost as xgb
+from xgboost.sklearn import XGBClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
@@ -18,7 +19,7 @@ if __name__ == "__main__":
         "objective": "binary:logistic",
         "booster": "gbtree",
         "tree_method": "hist",
-        "eval_metric": ["auc"],
+        "eval_metric": ["error"],
         "max_depth": 3,
         "eta": 0.01,
         "gamma": 1,
@@ -29,15 +30,22 @@ if __name__ == "__main__":
     X, y = load_dataset()
 
     train_X, val_X, train_y, val_y = train_test_split(X, y, test_size=0.10)
-    train_set = xgb.DMatrix(train_X, label=train_y)
-    val_set = xgb.DMatrix(val_X, label=val_y)
 
-    for t in [10, 100, 1000]:
-        param["num_parallel_tree"] = t
-        model = xgb.train(param, train_set, early_stopping_rounds=10, evals=[(val_set, "eval")])
-        preds = model.predict(val_set)
-        pred_labels = np.rint(preds)
-        print("accuracy:", accuracy_score(val_y, pred_labels))
+    model = XGBClassifier(silent=False, 
+                          scale_pos_weight=1,
+                          learning_rate=0.01,  
+                          colsample_bytree = 0.4,
+                          subsample = 0.8,
+                          objective='binary:logistic', 
+                          n_estimators=1000, 
+                          reg_alpha = 0.3,
+                          max_depth=4, 
+                          gamma=10)
+    model.fit(X, y)
+
+    preds = model.predict(val_X)
+    pred_labels = np.rint(preds)
+    print("accuracy:", accuracy_score(val_y, pred_labels))
 
     with open("./models/base.pickle", "wb") as f:
         pickle.dump(model, f)
