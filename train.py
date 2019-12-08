@@ -1,51 +1,60 @@
 import pickle
+import argparse
 import numpy as np
 import xgboost as xgb
 from xgboost.sklearn import XGBClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
-def load_dataset():
-    with open("/home/matheuscenta/missing-link/data/X_train.pickle", "rb") as f:
-        X = pickle.load(f)
-    with open("/home/matheuscenta/missing-link/data/y_train.pickle", "rb") as f:
-        y = pickle.load(f)
-    return X, y
+from util.io import load_dataset
+
+parser = argparse.ArgumentParser(description='Train a xgboost model.')
+parser.add_argument('--model_name', nargs=1, default='base',
+                    help='the name of the model for saving')
+parser.add_argument('--n_estimators', nargs=1, default=100,
+                    help='the number of trees to be trained')
+parser.add_argument('--gpu', action='store_true',
+                    help="wheter to use a gpu when training")
+
+
+args = parser.parse_args()
+print(args.accumulate(args.integers))
 
 if __name__ == "__main__":
-    param = {
-        "verbosity": 1,
-        "nthread": 16,
-        "objective": "binary:logistic",
-        "booster": "gbtree",
-        "tree_method": "hist",
-        "eval_metric": ["error"],
-        "max_depth": 3,
-        "eta": 0.01,
-        "gamma": 1,
-        "colsample_bytree": 1,
-        "grow_policy": "depthwise", # "lossguide",
-        "num_parallel_tree": 100,
-    }
-    X, y = load_dataset()
+    args = parser.parse_args()
 
-    train_X, val_X, train_y, val_y = train_test_split(X, y, test_size=0.10)
+    X_train, y_train = load_dataset("train")
+    X_val, y_val = load_dataset("val")
 
-    model = XGBClassifier(silent=False, 
-                          scale_pos_weight=1,
-                          learning_rate=0.01,  
-                          colsample_bytree = 0.4,
-                          subsample = 0.8,
-                          objective='binary:logistic', 
-                          n_estimators=100, 
-                          reg_alpha = 0.3,
-                          max_depth=4, 
-                          gamma=10)
-    model.fit(X, y)
+    if not args.gpu:
+        model = XGBClassifier(silent=False, 
+                              scale_pos_weight=1,
+                              learning_rate=0.01,  
+                              colsample_bytree=0.4,
+                              subsample=0.8,
+                              objective='binary:logistic', 
+                              n_estimators=args.n_estimators, 
+                              reg_alpha=0.3,
+                              max_depth=4, 
+                              gamma=1)
+    else:
+        model = XGBClassifier(tree_method="gpu_hist",
+                              gpu_id=0,
+                              silent=False, 
+                              scale_pos_weight=1,
+                              learning_rate=0.01,  
+                              colsample_bytree=0.4,
+                              subsample=0.8,
+                              objective='binary:logistic', 
+                              n_estimators=args.n_estimators, 
+                              reg_alpha=0.3,
+                              max_depth=4, 
+                              gamma=1)
+    model.fit(X_train, y_train)
 
-    preds = model.predict(val_X)
+    preds = model.predict(X_val)
     pred_labels = np.rint(preds)
-    print("accuracy:", accuracy_score(val_y, pred_labels))
+    print("accuracy:", accuracy_score(y_val, pred_labels))
 
-    with open("./models/base.pickle", "wb") as f:
+    with open("./models/" + args.model_name + ".pickle", "wb") as f:
         pickle.dump(model, f)
