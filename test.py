@@ -38,7 +38,7 @@ if __name__ == "__main__":
     X = np.array(transformed)
 
     # Load model
-    with open('./models/basic_xgb.pickle', 'rb') as f:
+    with open('./models/base.pickle', 'rb') as f:
         model = pickle.load(f)
 
     # Predict

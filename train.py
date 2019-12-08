@@ -37,7 +37,7 @@ if __name__ == "__main__":
                           colsample_bytree = 0.4,
                           subsample = 0.8,
                           objective='binary:logistic', 
-                          n_estimators=1000, 
+                          n_estimators=100, 
                           reg_alpha = 0.3,
                           max_depth=4, 
                           gamma=10)
