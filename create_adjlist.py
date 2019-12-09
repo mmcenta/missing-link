@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 
 parser = argparse.ArgumentParser(description='Generate the edge list of the graph represented by a dataset.')
 
-parser.add_argument('--input_file', nargs=1, required=True,
+parser.add_argument('--input_file', required=True,
                     help='file containing the dataset')
 
 
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     num_nodes = _count_files("./data/node_information/text")
 
     adjlist = [list() for _ in range(num_nodes)]
-    with open(args.input_file[0], "r") as f:
+    with open(args.input_file, "r") as f:
         for line in f:
             line = line.split()
             if line[2] == '1':

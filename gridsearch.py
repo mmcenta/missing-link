@@ -10,22 +10,22 @@ from util.io import load_dataset
 
 parser = argparse.ArgumentParser(description='Perform grid search on the hyperparameters given.')
 
-parser.add_argument('--train_name', nargs=1, required=True,
+parser.add_argument('--train_name', required=True,
                     help='name of the training dataset')
 
-parser.add_argument('--search_space_file', nargs=1, required=True,
+parser.add_argument('--search_space_file', required=True,
                     help='file specifying the search space')
 
-parser.add_argument('--val_name', nargs=1,
+parser.add_argument('--val_name',
                     help='name of the validation dataset')
 
-parser.add_argument('--model_name', nargs=1, default='base',
+parser.add_argument('--model_name', default='base',
                     help='name of the best model for saving')
 
 parser.add_argument('--gpu', action='store_true',
                     help='whether to use a gpu when training')
 
-parser.add_argument('--jobs', nargs=1, type=int, default=1,
+parser.add_argument('--jobs', type=int, default=1,
                     help='number of jobs to run in parallel')
 
 
@@ -44,12 +44,12 @@ if __name__ == "__main__":
 
     print("Loading training datataset...")
 
-    X_train, y_train = load_dataset(args.train_name[0])
+    X_train, y_train = load_dataset(args.train_name)
 
     print("Done.\nLoad search space...")
 
     search_space = dict()
-    with open(args.search_space_file[0], "r") as f:
+    with open(args.search_space_file, "r") as f:
         for line in f.readlines():
             line = line.split()
 
@@ -74,7 +74,7 @@ if __name__ == "__main__":
                               objective='binary:logistic',
                               reg_alpha=0.3)
 
-    gsearch = GridSearchCV(model, search_space, scoring='accuracy', n_jobs=args.jobs[0])
+    gsearch = GridSearchCV(model, search_space, scoring='accuracy', n_jobs=args.jobs)
     gsearch.fit(X_train, y_train)
 
     print("Done.")
@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
     print("Saving best model...")
 
-    with open("./models/" + args.model_name[0] + ".pickle", "wb") as f:
+    with open("./models/" + args.model_name + ".pickle", "wb") as f:
         pickle.dump(gsearch.best_estimator_, f)
 
     print("Done.")
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     if args.val_name is not None:
         print("Validating...")
 
-        X_val, y_val = load_dataset(args.val_name[0])
+        X_val, y_val = load_dataset(args.val_name)
         preds = model.predict(X_val)
         pred_labels = np.rint(preds)
         print("\taccuracy:", accuracy_score(y_val, pred_labels))
