@@ -18,10 +18,12 @@ if __name__ == "__main__":
     # Load text embeddigns
     with open("./data/node_information/reduced_tfidf_emb.pickle", "rb") as f:
         text_emb = pickle.load(f)
+        print(type(text_emb), text_emb.shape)
     
     # Load graph embeddings
     with open("./data/node_information/train_deepwalk.embeddings", "r") as f:
         num_nodes, dim = tuple(map(int, f.readline().split()))
+        print(num_nodes, dim)
         graph_emb = dict()
         for line in f:
             line = line.split()
