@@ -11,7 +11,7 @@ from util.io import load_dataset
 parser = argparse.ArgumentParser(description='Train a xgboost model.')
 parser.add_argument('--model_name', nargs=1, default='base',
                     help='the name of the model for saving')
-parser.add_argument('--n_estimators', nargs=1, default=100,
+parser.add_argument('--n_estimators', nargs=1, type=int, default=100,
                     help='the number of trees to be trained')
 parser.add_argument('--gpu', action='store_true',
                     help="wheter to use a gpu when training")
