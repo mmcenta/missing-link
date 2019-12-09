@@ -9,12 +9,19 @@ from sklearn.model_selection import train_test_split
 from util.io import load_dataset
 
 parser = argparse.ArgumentParser(description='Train a xgboost model.')
+
 parser.add_argument('--model_name', nargs=1, default='base',
                     help='the name of the model for saving')
+
 parser.add_argument('--n_estimators', nargs=1, type=int, default=100,
                     help='the number of trees to be trained')
+
 parser.add_argument('--gpu', action='store_true',
-                    help="wheter to use a gpu when training")
+                    help="whether to use a gpu when training")
+
+parser.add_argument('--max_depth', nargs=1, type=int, default=3,
+                    help="the depth of the trained trees")
+
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -31,7 +38,7 @@ if __name__ == "__main__":
                               objective='binary:logistic',
                               n_estimators=args.n_estimators[0],
                               reg_alpha=0.3,
-                              max_depth=4,
+                              max_depth=args.max_depth[0],
                               gamma=1)
     else:
         model = XGBClassifier(tree_method="gpu_hist",
@@ -44,7 +51,7 @@ if __name__ == "__main__":
                               objective='binary:logistic',
                               n_estimators=args.n_estimators[0],
                               reg_alpha=0.3,
-                              max_depth=4,
+                              max_depth=args.max_depth[0],
                               gamma=1)
     model.fit(X_train, y_train)
 
