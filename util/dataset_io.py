@@ -14,9 +14,9 @@ def load_dataset(name):
 
 
 def save_dataset(name, X, y=None):
-    os.makedirs('/matheuscenta/missing-link/data/datasets', exist_ok=True)
-    with open("./data/datasets/X_" + name + ".pickle", "wb") as f:
+    os.makedirs('/home/matheuscenta/missing-link/data/datasets', exist_ok=True)
+    with open("/home/matheuscenta/missing-link/data/datasets/X_" + name + ".pickle", "wb") as f:
         pickle.dump(X, f)
     if y is not None:
-        with open("./data/datasets/y_" + name + ".pickle", "wb") as f:
+        with open("/home/matheuscenta/missing-link/data/datasets/y_" + name + ".pickle", "wb") as f:
             pickle.dump(y, f)
