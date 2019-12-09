@@ -16,10 +16,6 @@ parser.add_argument('--n_estimators', nargs=1, default=100,
 parser.add_argument('--gpu', action='store_true',
                     help="wheter to use a gpu when training")
 
-
-args = parser.parse_args()
-print(args.accumulate(args.integers))
-
 if __name__ == "__main__":
     args = parser.parse_args()
 
