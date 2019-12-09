@@ -46,8 +46,7 @@ if __name__ == "__main__":
                               reg_alpha=0.3,
                               max_depth=4, 
                               gamma=1)
-    print(type(X_train), X_train.shape)
-    print(type(y_train), y_train.shape)
+    print(args.n_estimators)
     model.fit(X_train, y_train)
 
     preds = model.predict(X_val)
