@@ -23,28 +23,28 @@ if __name__ == "__main__":
     X_val, y_val = load_dataset("val")
 
     if not args.gpu:
-        model = XGBClassifier(silent=False, 
+        model = XGBClassifier(silent=False,
                               scale_pos_weight=1,
-                              learning_rate=0.01,  
+                              learning_rate=0.01,
                               colsample_bytree=0.4,
                               subsample=0.8,
-                              objective='binary:logistic', 
-                              n_estimators=args.n_estimators[0], 
+                              objective='binary:logistic',
+                              n_estimators=args.n_estimators[0],
                               reg_alpha=0.3,
-                              max_depth=4, 
+                              max_depth=4,
                               gamma=1)
     else:
         model = XGBClassifier(tree_method="gpu_hist",
                               gpu_id=0,
-                              silent=False, 
+                              silent=False,
                               scale_pos_weight=1,
-                              learning_rate=0.01,  
+                              learning_rate=0.01,
                               colsample_bytree=0.4,
                               subsample=0.8,
-                              objective='binary:logistic', 
-                              n_estimators=args.n_estimators[0], 
+                              objective='binary:logistic',
+                              n_estimators=args.n_estimators[0],
                               reg_alpha=0.3,
-                              max_depth=4, 
+                              max_depth=4,
                               gamma=1)
     model.fit(X_train, y_train)
 
@@ -52,5 +52,5 @@ if __name__ == "__main__":
     pred_labels = np.rint(preds)
     print("accuracy:", accuracy_score(y_val, pred_labels))
 
-    with open("./models/" + args.model_name + ".pickle", "wb") as f:
+    with open("./models/" + args.model_name[0] + ".pickle", "wb") as f:
         pickle.dump(model, f)
