@@ -23,11 +23,11 @@ if __name__ == "__main__":
 
     # Load text embeddigns
     print(args.text_embeddings_file, args.graph_embeddings_file, args.input_file, args.output_name)
-    with open(args.text_embeddings_file[0], "rb") as f:
+    with open(args.text_embeddings_file, "rb") as f:
         text_emb = pickle.load(f)
 
     # Load graph embeddings
-    with open(args.graph_embeddings_file[0], "r") as f:
+    with open(args.graph_embeddings_file, "r") as f:
         num_nodes, dim = tuple(map(int, f.readline().split()))
         graph_emb = dict()
         for line in f:
@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     # Transform dataset
     X, y = [], []
-    with open(args.input_file[0], "r") as f:
+    with open(args.input_file, "r") as f:
         for line in f:
             line = line.split()
             src, tgt = int(line[0]), int(line[1])
@@ -49,4 +49,4 @@ if __name__ == "__main__":
     X, y = np.array(X), np.array(y).ravel() if len(y) > 0 else None
 
     # Save datasets
-    save_dataset(args.output_name[0], X, y)
+    save_dataset(args.output_name, X, y)
