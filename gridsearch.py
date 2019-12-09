@@ -93,7 +93,7 @@ if __name__ == "__main__":
         print("Validating...")
 
         X_val, y_val = load_dataset(args.val_name)
-        preds = model.predict(X_val)
+        preds = gsearch.best_estimator_.predict(X_val)
         pred_labels = np.rint(preds)
         print("\taccuracy:", accuracy_score(y_val, pred_labels))
 
