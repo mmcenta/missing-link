@@ -1,53 +1,41 @@
 import csv
 import pickle
+import argparse
 import numpy as np
 from xgboost.sklearn import XGBClassifier
 
+from util.dataset_io import load_dataset
+
+
+parser = argparse.ArgumentParser(description='Output predictions of the given model to a CSV file.')
+
+parser.add_argument('--model_file', args=1, required=True,
+                    help='file containing the model to make predictions')
+
+parser.add_argument('--input_name', nargs=1, required=True,
+                    help='name of the test dataset')
+
+parser.add_argument('--output', nargs=1, default='submission.csv',
+                    help='')
+
 
 if __name__ == "__main__":
-    # Load text embeddigns
-    with open("./data/node_information/reduced_tfidf_emb.pickle", "rb") as f:
-        text_emb = pickle.load(f)
-    
-    # Load graph (deepwalk) embeddings
-    with open("./data/node_information/deepwalk.embeddings", "r") as f:
-        num_nodes, dim = tuple(map(int, f.readline().split()))
+    args = parser.parse_args()
 
-        graph_emb = dict()
-        for line in f:
-            line = line.split()
-            node = int(line[0])
-            emb = np.array(list(map(float, line[1:])))
-            graph_emb[node] = emb
-    
     # Load testing data
-    X= []
-    with open("./data/testing.txt", "r") as f:
-        for line in f:
-            line = line.split()
-            X.append([int(line[0]), int(line[1])])
-    X= np.array(X)
-
-    # Transform data using the embeddings
-    transformed = []
-    for x in X:
-        src, tgt = tuple(map(int, x))
-        x_transformed = np.concatenate([text_emb[src], graph_emb.get(src, np.zeros((dim,))),
-                                        text_emb[tgt], graph_emb.get(tgt, np.zeros((dim,)))], axis=None)
-        transformed.append(x_transformed)
-    X = np.array(transformed)
+    X, _ = load_dataset(args.input_name[0])
 
     # Load model
-    with open('./models/base.pickle', 'rb') as f:
+    with open(args.model_file[0], 'rb') as f:
         model = pickle.load(f)
 
     # Predict
     predictions = model.predict(X)
 
-    predictions = enumerate(predictions)
     # Write the output in the format required by Kaggle
+    predictions = enumerate(predictions)
     with open("xgb_predictions.csv", "w") as f:
         csv_out = csv.writer(f)
         csv_out.writerow(['id','predicted'])
         for idx, label in predictions:
-            csv_out.writerow([idx, int(label)]) 
+            csv_out.writerow([idx, int(label)])
