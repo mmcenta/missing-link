@@ -20,9 +20,8 @@ if __name__ == "__main__":
         text_emb = pickle.load(f)
     
     # Load graph embeddings
-    with open("./data/node_information/deepwalk.embeddings", "r") as f:
+    with open("./data/node_information/train_deepwalk.embeddings", "r") as f:
         num_nodes, dim = tuple(map(int, f.readline().split()))
-
         graph_emb = dict()
         for line in f:
             line = line.split()
@@ -33,9 +32,7 @@ if __name__ == "__main__":
     # Transform datasets
     X_train, y_train = transform_data("./data/train.txt", text_emb, graph_emb)
     X_val, y_val = transform_data("./data/val.txt", text_emb, graph_emb) 
-    X_test, y_test = transform_data("./data/testing.txt", text_emb, graph_emb)
 
     # Save datasets
     save_dataset("train", X_train, y_train)
     save_dataset("val", X_val, y_val)
-    save_dataset("test", X_test, y_test)
