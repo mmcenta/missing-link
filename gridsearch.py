@@ -75,6 +75,8 @@ if __name__ == "__main__":
                               reg_alpha=0.3)
 
     gsearch = GridSearchCV(model, search_space, scoring='accuracy', n_jobs=args.jobs)
+    print(X_train.shape, y_train.shape)
+    print(y_train)
     gsearch.fit(X_train, y_train)
 
     print("Done.")
