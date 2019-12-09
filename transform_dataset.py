@@ -5,16 +5,16 @@ from util.dataset_io import save_dataset
 
 parser = argparse.ArgumentParser(description='Transform the original dataset to use the precalculated embeddings.')
 
-parser.add_argument('--input_file', nargs=1, required=True,
+parser.add_argument('--input_file', required=True,
                     help='file containing the dataset to be transformed')
 
-parser.add_argument('--output_name', nargs=1, required=True,
+parser.add_argument('--output_name', required=True,
                     help='name of the transformed dataset')
 
-parser.add_argument('--text_embeddings_file', nargs=1, default='./data/node_information/reduced_tfidf_emb.pickle',
+parser.add_argument('--text_embeddings_file', default='./data/node_information/reduced_tfidf_emb.pickle',
                     help='name of the file containing the text embeddings')
 
-parser.add_argument('--graph_embeddings_file', nargs=1, default='./data/node_information/train_deepwalk.embeddings',
+parser.add_argument('--graph_embeddings_file', default='./data/node_information/train_deepwalk.embeddings',
                     help='name of the file containing the graph embeddings')
 
 
