@@ -22,6 +22,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Load text embeddigns
+    print(args.text_embeddings_file, args.graph_embeddings_file, args.input_file, args.output_name)
     with open(args.text_embeddings_file[0], "rb") as f:
         text_emb = pickle.load(f)
 
