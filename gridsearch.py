@@ -6,7 +6,7 @@ from xgboost.sklearn import XGBClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV
 
-from util.io import load_dataset
+from util.dataset_io import load_dataset
 
 parser = argparse.ArgumentParser(description='Perform grid search on the hyperparameters given.')
 
