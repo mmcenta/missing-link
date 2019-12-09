@@ -29,7 +29,7 @@ if __name__ == "__main__":
                               colsample_bytree=0.4,
                               subsample=0.8,
                               objective='binary:logistic', 
-                              n_estimators=args.n_estimators, 
+                              n_estimators=args.n_estimators[0], 
                               reg_alpha=0.3,
                               max_depth=4, 
                               gamma=1)
@@ -42,11 +42,10 @@ if __name__ == "__main__":
                               colsample_bytree=0.4,
                               subsample=0.8,
                               objective='binary:logistic', 
-                              n_estimators=args.n_estimators, 
+                              n_estimators=args.n_estimators[0], 
                               reg_alpha=0.3,
                               max_depth=4, 
                               gamma=1)
-    print(args.n_estimators)
     model.fit(X_train, y_train)
 
     preds = model.predict(X_val)
