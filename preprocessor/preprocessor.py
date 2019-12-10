@@ -39,12 +39,14 @@ def save_object(obj, path):
 
 
 class Preprocessor:
-    def __init__(self, data_filepath='./data'):
+    def __init__(self, data_filepath='./data', use_bert=False):
         self.DATA_PATH = data_filepath
         self.NODES_PATH = os.path.join(self.DATA_PATH, "node_information")
         self.TEXT_PATH = os.path.join(self.NODES_PATH, "text")
         self.TOKENS_PATH = os.path.join(self.NODES_PATH, "tokens")
         self.URLS_PATH = os.path.join(self.NODES_PATH, "urls")
+
+        self.use_bert = use_bert
 
         # Variables that store different parts of the processed documents
         self.file_text = load_all_files(self.TEXT_PATH)
@@ -161,7 +163,6 @@ class Preprocessor:
         sparse_embeddings = self.tfidf_vectorize(file_tokens)
         reduced_sparse_embeddings = self.reduce_sparse_embeddings(sparse_embeddings)
 
-        full_embeddings = self.bert_vectorize(file_tokens)
-        reduced_embeddings = self.reduce_embeddings(full_embeddings)
-
-        return reduced_sparse_embeddings, reduced_embeddings
+        if self.use_bert:
+            full_embeddings = self.bert_vectorize(file_tokens)
+            reduced_embeddings = self.reduce_embeddings(full_embeddings)
