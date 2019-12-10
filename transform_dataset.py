@@ -23,7 +23,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Load text embeddigns
-    text_emb = load_embeddings(args.text_embedding_file, key_transform=int)
+    text_emb = load_embeddings(args.text_embeddings_file, key_transform=int)
 
     # Load graph embeddings
     graph_emb = load_embeddings(args.graph_embeddings_file, key_transform=int, header=True)
