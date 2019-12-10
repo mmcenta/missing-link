@@ -1,11 +1,16 @@
 import os
 import pickle
 from tqdm import tqdm
-from sklearn.decomposition import TruncatedSVD
+from sklearn.decomposition import TruncatedSVD, PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from .tokenizer import FullTokenizer
+from .bert import BertVectorizer
 from util.embeddings_io import save_embeddings_from_array
+
+
+OUTPUT_DIM = 256
+
 
 def load_all_files(data_filepath):
     def _count_files(dir_path):
@@ -16,7 +21,7 @@ def load_all_files(data_filepath):
         with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
             return f.read()
 
-    print('Begin loading files...')
+    print('Loading files...', end='')
 
     file_text = []
     num_files = _count_files(data_filepath)
@@ -24,7 +29,7 @@ def load_all_files(data_filepath):
         filepath = os.path.join(data_filepath, str(i) + ".txt")
         file_text.append(_get_file_string(filepath))
 
-    print('Finished loading files.')
+    print('Done.')
     return file_text
 
 
@@ -43,29 +48,30 @@ class Preprocessor:
 
         # Variables that store different parts of the processed documents
         self.file_text = load_all_files(self.TEXT_PATH)
-        self.file_tokens = None
-        self.file_urls = None
-        self.tfidf_embeddings = None
 
-        # Elements
+        # Preprocessing objects
         self.tokenizer = FullTokenizer()
         self.tfidf_vectorizer = TfidfVectorizer(input='content',
                                                 encoding='utf-8',
                                                 lowercase=True)
-        self.tsvd = TruncatedSVD(n_components=256)
+        self.tfidf_vocab = None
+        self.tsvd = TruncatedSVD(n_components=OUTPUT_DIM)
+        self.bert_vectorizer = BertVectorizer()
+        self.pca = PCA(n_components=OUTPUT_DIM)
+
 
     def tokenize_all(self):
-        print('Begin tokenizing files...')
+        print('Tokenizing files...', end='')
 
         # Tokenize each file
-        self.file_urls = []
-        self.file_tokens = []
+        file_urls = []
+        file_tokens = []
         for file in tqdm(self.file_text):
             tokens, urls = self.tokenizer.tokenize(file)
-            self.file_tokens.append(tokens)
-            self.file_urls.append(urls)
+            file_tokens.append(tokens)
+            file_urls.append(urls)
 
-        print('Finished tokenizing files.\nBegin saving...')
+        print('Done.\nSaving...', end='')
 
         # Make tokens and urls directories
         os.makedirs(self.TOKENS_PATH, exist_ok=True)
@@ -74,61 +80,88 @@ class Preprocessor:
         # Save tokens and urls
         for i in tqdm(range(len(self.file_text))):
             tokens_file = os.path.join(self.TOKENS_PATH, str(i) + ".txt")
-            urls_file = os.path.join(self.URLS_PATH, str(i) + ".txt")
             with open(tokens_file, 'w', encoding='utf-8') as tf:
-                tf.write('\n'.join(self.file_tokens[i]))
+                tf.write('\n'.join(file_tokens[i]))
+
+            urls_file = os.path.join(self.URLS_PATH, str(i) + ".txt")
             with open(urls_file, 'w', encoding='utf-8') as uf:
-                uf.write('\n'.join(self.file_urls[i]))
+                uf.write('\n'.join(file_urls[i]))
 
-        print('Finished saving.')
+        print('Done.')
 
-    def tfidf_vectorize(self):
-        print('Begin tf-idf vectorization...')
-        tokens = ['\n'.join(t) for t in self.file_tokens]
+        return file_tokens, file_urls
+
+    def tfidf_vectorize(self, file_tokens):
+        print('Perform tf-idf vectorization...', end='')
+        docs = ['\n'.join(t) for t in file_tokens]
 
         # Fit the vectorizer and get the vocab
-        self.tfidf_vectorizer.fit(tokens)
+        self.tfidf_vectorizer.fit(docs)
         self.tfidf_vocab = self.tfidf_vectorizer.get_feature_names()
 
         # Apply the vectorizer to the text
-        self.tfidf_embeddings = self.tfidf_vectorizer.transform(tokens)
+        tfidf_embeddings = self.tfidf_vectorizer.transform(docs)
 
-        print('Finished tf-ifd vectorization.\nBegin saving...')
+        print('Done.\nSaving...', end='')
 
-        # Save the vectorizer, the vocab and the embeddings
-        vectorizer_file = os.path.join(self.NODES_PATH,
-                                       "tfidf_vectorizer.pickle")
-        save_object(self.tfidf_vectorizer, vectorizer_file)
-
-        vocab_file = os.path.join(self.NODES_PATH,
-                                  "tfidf_vocab.pickle")
-        save_object(self.tfidf_vocab, vocab_file)
-
+        # Save  the embeddings
         emb_file = os.path.join(self.NODES_PATH,
                                 "tfidf_embeddings.pickle")
-        save_object(self.tfidf_embeddings, emb_file)
+        save_object(tfidf_embeddings, emb_file)
 
-        print('Finished saving.')
+        print('Done.')
 
-    def reduce_tfidf_embeddings(self):
-        print('Begin dimentionality reduction on tf-idf embeddings...')
+        return tfidf_embeddings
 
-        # Train an incremental PCA algorithm on the sparse data
-        self.reduced_tfidf_embeddings =  self.tsvd.fit_transform(self.tfidf_embeddings)
+    def reduce_sparse_embeddings(self, sparse_embeddings):
+        print('Perform dimentionality reduction on sparse embeddings...', end='')
 
-        print('Finished dimentionality reduction on tf-idf embeddings.')
-        print('Begin saving...')
+        # Train an truncated SVD algorithm on the sparse data
+        reduced_embeddings = self.tsvd.fit_transform(sparse_embeddings)
 
-        # Save the reduced embeddings and the IPCA object
-        tsvd_file = os.path.join(self.NODES_PATH, "tsvd.pickle")
-        save_object(self.tsvd, tsvd_file)
+        print('Done.\nSaving...', end='')
 
-        reduced_emb_file = os.path.join(self.NODES_PATH, "reduced_tfidf.embeddings")
-        save_embeddings_from_array(self.reduced_tfidf_embeddings, reduced_emb_file)
+        # Save the reduced embeddings
+        reduced_emb_file = os.path.join(self.NODES_PATH, "reduced_sparse.embeddings")
+        save_embeddings_from_array(reduced_embeddings, reduced_emb_file)
 
-        print('Finished saving.')
+        print('Done.')
+
+        return reduced_embeddings
+
+    def bert_vectorize(self, file_tokens):
+        print('Perform BERT vectorization...', end='')
+
+        docs = ['\n'.join(t) for t in file_tokens]
+        full_embeddings = self.bert_vectorizer.transform(docs)
+
+        print('Done.\nSaving...', end='')
+
+        # Save full size embeddings
+        emb_file = os.path.join(self.NODES_PATH, "bert_embeddings.pickle")
+        save_object(full_embeddings, emb_file)
+
+        print('Done.')
+
+    def reduce_embeddings(self, full_embeddings):
+        print('Perform dimensionality reduction on embeddings...', end='')
+
+        # Train a PCA vectorizer on the full embeddings
+        reduced_embeddings = self.pca.fit_transform(full_embeddings)
+
+        print('Done. Saving...', end='')
+
+        # Save reduced embeddings
+        emb_file = os.path.join(self.NODES_PATH, "reduced.embeddings")
+        save_embeddings_from_array(reduced_embeddings, emb_file)
 
     def preprocess(self):
-        self.tokenize_all()
-        self.tfidf_vectorize()
-        self.reduce_tfidf_embeddings()
+        file_tokens, file_urls = self.tokenize_all(self.file_text)
+
+        sparse_embeddings = self.tfidf_vectorize(file_tokens)
+        reduced_sparse_embeddings = self.reduce_sparse_embeddings(sparse_embeddings)
+
+        full_embeddings = self.bert_vectorize(file_tokens)
+        reduced_embeddings = self.reduce_embeddings(full_embeddings)
+
+        return reduced_sparse_embeddings, reduced_embeddings
