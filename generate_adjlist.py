@@ -19,7 +19,7 @@ parser.add_argument('--output_file', default='./data/adjlist.txt',
 parser.add_argument('--embeddings_file',
                     help='file containing the similarity embeddings between nodes')
 
-parser.add_argument('--num_potential_links', type=int, default=3,
+parser.add_argument('--num_potential_links', type=int, default=5,
                     help='number of potential links to be added to the graph')
 
 
