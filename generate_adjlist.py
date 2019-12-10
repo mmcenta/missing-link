@@ -28,14 +28,14 @@ def _count_files(dir_path):
                 if os.path.isfile(os.path.join(dir_path, d))])
 
 
-def _k_nearest_neighbours(k, node, num_nodes, embeddings):
+def _k_nearest_neighbours(k, node, num_nodes, dist_matrix):
     heap = []
 
     for adj in range(num_nodes):
         if adj == node:
             continue
 
-        dist = cosine_similarity(embeddings[node], embeddings[adj]).asscalar()
+        dist = dist_matrix[node][adj]
         if len(heap) == 0 or dist < -heap[0][0]:
             heappush(heap, (-dist, adj))
             if len(heap) > k:
@@ -69,10 +69,11 @@ if __name__ == "__main__":
         # nearest neighbours to each node
 
         embeddings = load_embeddings(args.embeddings_file, key_transform=int)
+        dist_matrix = cosine_similarity(embeddings)
 
         for node in range(num_nodes):
             potential_links = _k_nearest_neighbours(args.num_potential_links,
-                                                    node, num_nodes, embeddings)
+                                                    node, num_nodes, dist_matrix)
             for adj in potential_links:
                 G.add_edge(node, adj)
 
