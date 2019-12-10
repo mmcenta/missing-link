@@ -123,7 +123,7 @@ class Preprocessor:
         tsvd_file = os.path.join(self.NODES_PATH, "tsvd.pickle")
         save_object(self.tsvd, tsvd_file)
 
-        reduced_emb_file = os.path.join(self.NODES_PATH, "reduced_tfidf_emb.pickle")
+        reduced_emb_file = os.path.join(self.NODES_PATH, "reduced_tfidf.embeddings")
         save_embeddings_from_array(self.reduced_tfidf_embeddings, reduced_emb_file)
 
         print('Finished saving.')

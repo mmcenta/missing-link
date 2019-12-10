@@ -12,7 +12,7 @@ parser.add_argument('--input_file', required=True,
 parser.add_argument('--output_name', required=True,
                     help='name of the transformed dataset')
 
-parser.add_argument('--text_embeddings_file', default='./data/node_information/reduced_tfidf_emb.pickle',
+parser.add_argument('--text_embeddings_file', default='./data/node_information/reduced_tfidf.embeddings',
                     help='name of the file containing the text embeddings')
 
 parser.add_argument('--graph_embeddings_file', default='./data/node_information/train_deepwalk.embeddings',
