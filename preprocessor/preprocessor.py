@@ -21,7 +21,7 @@ def load_all_files(data_filepath):
         with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
             return f.read()
 
-    print('Loading files...', end='')
+    print('Loading files...')
 
     file_text = []
     num_files = _count_files(data_filepath)
@@ -62,18 +62,18 @@ class Preprocessor:
         self.pca = PCA(n_components=OUTPUT_DIM)
 
 
-    def tokenize_all(self):
-        print('Tokenizing files...', end='')
+    def tokenize_all(self, file_text):
+        print('Tokenizing files...')
 
         # Tokenize each file
         file_urls = []
         file_tokens = []
-        for file in tqdm(self.file_text):
+        for file in tqdm(file_text):
             tokens, urls = self.tokenizer.tokenize(file)
             file_tokens.append(tokens)
             file_urls.append(urls)
 
-        print('Done.\nSaving...', end='')
+        print('Done.\nSaving...')
 
         # Make tokens and urls directories
         os.makedirs(self.TOKENS_PATH, exist_ok=True)
