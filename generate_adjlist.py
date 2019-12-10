@@ -28,6 +28,13 @@ def _count_files(dir_path):
                 if os.path.isfile(os.path.join(dir_path, d))])
 
 
+def _convert_embeddings_to_matrix(embeddings):
+    m = []
+    for idx in range(len(embeddings.keys())):
+        m.append(embeddings[idx])
+    return np.array(m)
+
+
 def _k_nearest_neighbours(k, node, num_nodes, dist_matrix):
     heap = []
 
@@ -68,7 +75,7 @@ if __name__ == "__main__":
         # If a similarity embeddings were provided, link the num_potential_links
         # nearest neighbours to each node
 
-        embeddings = load_embeddings(args.embeddings_file, key_transform=int)
+        embeddings = _convert_embeddings_to_matrix(load_embeddings(args.embeddings_file, key_transform=int))
         dist_matrix = cosine_similarity(embeddings)
 
         for node in range(num_nodes):
