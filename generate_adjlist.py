@@ -13,6 +13,9 @@ parser = argparse.ArgumentParser(description='Generate the edge list of the grap
 parser.add_argument('--input_file', required=True,
                     help='file containing the dataset')
 
+parser.add_argument('--ouput_file', default='./data/adjlist.txt',
+                    help='file that will hold the resulting adjacency list')
+
 parser.add_argument('--embeddings_file',
                     help='file containing the similarity embeddings between nodes')
 
@@ -74,7 +77,7 @@ if __name__ == "__main__":
                 G.add_edge(node, adj)
 
     # Save the adjacency list
-    with open("./data/adjlist.txt", "w") as f:
+    with open(args.output_file, "w") as f:
         adjlist = G.adjacency()
         for node, adj in adjlist:
             line = " ".join([str(node)] + list(sorted(adj.keys())))
