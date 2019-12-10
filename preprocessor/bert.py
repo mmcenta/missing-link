@@ -6,8 +6,8 @@ class BertVectorizer:
     def __init__(self):
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-multilingual-uncased')
         self.model = BertModel.from_pretrained('bert-base-multilingual-uncased')
-        model.eval()
-        model.to('cuda')
+        self.model.eval()
+        self.model.to('cuda')
 
     def transform(self, documents):
         input_ids = torch.LongTensor([self.tokenizer.encode(doc) for doc in documents])
