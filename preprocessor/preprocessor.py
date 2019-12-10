@@ -94,7 +94,7 @@ class Preprocessor:
         return file_tokens, file_urls
 
     def tfidf_vectorize(self, file_tokens):
-        print('Perform tf-idf vectorization...', end='')
+        print('Perform tf-idf vectorization...')
         docs = ['\n'.join(t) for t in file_tokens]
 
         # Fit the vectorizer and get the vocab
@@ -116,12 +116,12 @@ class Preprocessor:
         return tfidf_embeddings
 
     def reduce_sparse_embeddings(self, sparse_embeddings):
-        print('Perform dimentionality reduction on sparse embeddings...', end='')
+        print('Perform dimentionality reduction on sparse embeddings...')
 
         # Train an truncated SVD algorithm on the sparse data
         reduced_embeddings = self.tsvd.fit_transform(sparse_embeddings)
 
-        print('Done.\nSaving...', end='')
+        print('Done.\nSaving...')
 
         # Save the reduced embeddings
         reduced_emb_file = os.path.join(self.NODES_PATH, "reduced_sparse.embeddings")
@@ -132,12 +132,12 @@ class Preprocessor:
         return reduced_embeddings
 
     def bert_vectorize(self, file_tokens):
-        print('Perform BERT vectorization...', end='')
+        print('Perform BERT vectorization...')
 
         docs = ['\n'.join(t) for t in file_tokens]
         full_embeddings = self.bert_vectorizer.transform(docs)
 
-        print('Done.\nSaving...', end='')
+        print('Done.\nSaving...')
 
         # Save full size embeddings
         emb_file = os.path.join(self.NODES_PATH, "bert_embeddings.pickle")
@@ -146,12 +146,12 @@ class Preprocessor:
         print('Done.')
 
     def reduce_embeddings(self, full_embeddings):
-        print('Perform dimensionality reduction on embeddings...', end='')
+        print('Perform dimensionality reduction on embeddings...')
 
         # Train a PCA vectorizer on the full embeddings
         reduced_embeddings = self.pca.fit_transform(full_embeddings)
 
-        print('Done. Saving...', end='')
+        print('Done. Saving...')
 
         # Save reduced embeddings
         emb_file = os.path.join(self.NODES_PATH, "reduced.embeddings")
