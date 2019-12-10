@@ -12,21 +12,28 @@ parser.add_argument('--input_file', required=True,
 parser.add_argument('--output_name', required=True,
                     help='name of the transformed dataset')
 
-parser.add_argument('--text_embeddings_file', default='./data/node_information/reduced_tfidf.embeddings',
+parser.add_argument('--graph_embeddings_file', default=True,
+                    help='name of the file containing the graph embeddings')
+
+parser.add_argument('--text_embeddings_file',
                     help='name of the file containing the text embeddings')
 
-parser.add_argument('--graph_embeddings_file', default='./data/node_information/train_deepwalk.embeddings',
-                    help='name of the file containing the graph embeddings')
+
+def _get_vector(key, embeddings, vec_shape):
+    if key in embeddings:
+        return embeddings[key]
+    return np.random.normal(size=vec_shape)
 
 
 if __name__ == "__main__":
     args = parser.parse_args()
 
-    # Load text embeddigns
-    text_emb = load_embeddings(args.text_embeddings_file, key_transform=int)
-
     # Load graph embeddings
     graph_emb = load_embeddings(args.graph_embeddings_file, key_transform=int)
+
+    # Load text embeddigns
+    if args.text_embeddings_file is not None:
+        text_emb = load_embeddings(args.text_embeddings_file, key_transform=int)
 
     # Transform dataset
     shape = next(iter(text_emb.values())).shape
@@ -37,28 +44,13 @@ if __name__ == "__main__":
             line = line.split()
             src, tgt = int(line[0]), int(line[1])
 
-            if src in graph_emb:
-                src_graph = graph_emb[src]
-            else:
-                src_graph = np.random.normal(size=shape)
+            src_embedding = [_get_vector(src, graph_emb, shape)]
+            tgt_embedding = [_get_vector(tgt, graph_emb, shape)]
+            if args.text_embeddings_file is not None:
+                src_embedding.append(_get_vector(src, text_emb, shape))
+                tgt_embedding.append(_get_vector(tgt, text_emb, shape))
 
-            if src in text_emb:
-                src_text = text_emb[src]
-            else:
-                src_text = np.random.normal(size=shape)
-
-            if tgt in graph_emb:
-                tgt_graph = graph_emb[tgt]
-            else:
-                tgt_graph = np.random.normal(size=shape)
-
-            if tgt in text_emb:
-                tgt_text = text_emb[tgt]
-            else:
-                tgt_text = np.random.normal(size=shape)
-
-            X.append(np.concatenate([src_text, src_graph,
-                                     tgt_text, tgt_graph], axis=None))
+            X.append(np.concatenate(src_embedding + tgt_embedding, axis=None))
             if len(line) >= 3:
                 y.append(int(line[2]))
     X, y = np.array(X), np.array(y).ravel() if len(y) > 0 else None
