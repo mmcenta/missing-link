@@ -15,5 +15,5 @@ class Doc2VecVectorizer:
         docs = [TaggedDocument(" ".join(t), [i]) for i, t in enumerate(file_tokens)]
 
         self.model.build_vocab(docs)
-        self.model.train(docs, total_examples=model.corpus_count, epochs=model.epochs)
+        self.model.train(docs, total_examples=self.model.corpus_count, epochs=self.model.epochs)
         self.model.save_word2vec_format(filepath, doctag_vec=True, word_vec=False, binary=False)

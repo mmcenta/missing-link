@@ -162,7 +162,7 @@ class Preprocessor:
         save_embeddings_from_array(reduced_embeddings, emb_file)
 
     def doc2vec_vectorize(self, file_tokens):
-        print('Perform doc2vec vectorization. and saving..')
+        print('Perform doc2vec vectorization and save...')
 
         emb_file = os.path.join(self.NODES_PATH, "doc2vec.embeddings")
         self.doc2vec_vectorizer.transform_save(file_tokens, emb_file)
