@@ -8,9 +8,9 @@ def save_embeddings_from_array(embeddings, filepath, header=False):
     with open(filepath, "w") as f:
         if header:
             num_nodes, dim = embeddings.shape
-            f.write(str(num_nodes) + " " + str(dim))
+            f.write(str(num_nodes) + " " + str(dim) + '\n')
         for idx, vector in enumerate(embeddings):
-            f.write(" ".join([str(idx)] + list(map(str, vector))))
+            f.write(" ".join([str(idx)] + list(map(str, vector))) + '\n')
 
 
 def save_embeddings_from_dict(embeddings, filepath, header=False):
@@ -18,9 +18,9 @@ def save_embeddings_from_dict(embeddings, filepath, header=False):
     with open(filepath, "w") as f:
         if header:
             num_nodes, dim = len(embeddings.keys()), len(next(iter(embeddings.values())))
-            f.write(str(num_nodes) + " " + str(dim))
+            f.write(str(num_nodes) + " " + str(dim) + '\n')
         for key, vector in embeddings.items():
-            f.write(" ".join([str(key)] + list(map(str, vector))))
+            f.write(" ".join([str(key)] + list(map(str, vector))) + '\n')
 
 
 def load_embeddings(filepath, key_transform=None, vector_transform=float, header=False):
