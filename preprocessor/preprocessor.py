@@ -158,11 +158,7 @@ class Preprocessor:
         save_embeddings_from_array(reduced_embeddings, emb_file)
 
     def preprocess(self):
-        file_tokens, file_urls = self.tokenize_all(self.file_text)
-
-        sparse_embeddings = self.tfidf_vectorize(file_tokens)
-        reduced_sparse_embeddings = self.reduce_sparse_embeddings(sparse_embeddings)
-
+        file_tokens, _ = self.tokenize_all(self.file_text)
+        self.reduce_sparse_embeddings(self.tfidf_vectorize(file_tokens))
         if self.use_bert:
-            full_embeddings = self.bert_vectorize(file_tokens)
-            reduced_embeddings = self.reduce_embeddings(full_embeddings)
+            self.reduce_embeddings(self.bert_vectorize(file_tokens))
