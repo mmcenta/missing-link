@@ -80,7 +80,7 @@ if __name__ == "__main__":
     with open(args.output_file, "w") as f:
         adjlist = G.adjacency()
         for node, adj in adjlist:
-            line = " ".join([str(node)] + list(sorted(adj.keys())))
+            line = " ".join([str(node)] + list(map(str, sorted(adj.keys()))))
             f.write(line + '\n')
 
     print("Done.")
