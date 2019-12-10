@@ -6,6 +6,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 from .tokenizer import FullTokenizer
 from .bert import BertVectorizer
+from .doc2vec import Doc2VecVectorizer
 from util.embeddings_io import save_embeddings_from_array
 
 
@@ -39,14 +40,16 @@ def save_object(obj, path):
 
 
 class Preprocessor:
-    def __init__(self, data_filepath='./data', use_bert=False):
+    def __init__(self, data_filepath='./data', use_tfidf=False, use_bert=False, use_doc2vec=False):
         self.DATA_PATH = data_filepath
         self.NODES_PATH = os.path.join(self.DATA_PATH, "node_information")
         self.TEXT_PATH = os.path.join(self.NODES_PATH, "text")
         self.TOKENS_PATH = os.path.join(self.NODES_PATH, "tokens")
         self.URLS_PATH = os.path.join(self.NODES_PATH, "urls")
 
+        self.use_tfidf = use_tfidf
         self.use_bert = use_bert
+        self.use_doc2vec = use_doc2vec
 
         # Variables that store different parts of the processed documents
         self.file_text = load_all_files(self.TEXT_PATH)
@@ -60,6 +63,7 @@ class Preprocessor:
         self.tsvd = TruncatedSVD(n_components=OUTPUT_DIM)
         self.bert_vectorizer = BertVectorizer()
         self.pca = PCA(n_components=OUTPUT_DIM)
+        self.doc2vec_vectorizer = Doc2VecVectorizer(n_components=OUTPUT_DIM)
 
 
     def tokenize_all(self, file_text):
@@ -124,7 +128,7 @@ class Preprocessor:
         print('Done.\nSaving...')
 
         # Save the reduced embeddings
-        reduced_emb_file = os.path.join(self.NODES_PATH, "reduced_sparse.embeddings")
+        reduced_emb_file = os.path.join(self.NODES_PATH, "reduced_tfidf.embeddings")
         save_embeddings_from_array(reduced_embeddings, reduced_emb_file)
 
         print('Done.')
@@ -154,11 +158,18 @@ class Preprocessor:
         print('Done. Saving...')
 
         # Save reduced embeddings
-        emb_file = os.path.join(self.NODES_PATH, "reduced.embeddings")
+        emb_file = os.path.join(self.NODES_PATH, "reduced_bert.embeddings")
         save_embeddings_from_array(reduced_embeddings, emb_file)
+
+    def doc2vec_vectorize(self, file_tokens):
+        emb_file = os.path.join(self.NODES_PATH, "doc2vec.embeddings")
+        self.doc2vec_vectorizer.transform_save(file_tokens, emb_file)
 
     def preprocess(self):
         file_tokens, _ = self.tokenize_all(self.file_text)
-        self.reduce_sparse_embeddings(self.tfidf_vectorize(file_tokens))
+        if self.use_tfidf:
+            self.reduce_sparse_embeddings(self.tfidf_vectorize(file_tokens))
         if self.use_bert:
             self.reduce_embeddings(self.bert_vectorize(file_tokens))
+        if self.use_doc2vec:
+            self.doc2vec_vectorize(file_tokens)
