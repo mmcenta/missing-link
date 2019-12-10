@@ -28,7 +28,6 @@ if __name__ == "__main__":
     # Load graph embeddings
     graph_emb = load_embeddings(args.graph_embeddings_file, key_transform=int, header=True)
 
-    print(text_emb)
     # Transform dataset
     shape = next(iter(text_emb.values())).shape
 
