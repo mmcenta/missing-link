@@ -29,11 +29,24 @@ if __name__ == "__main__":
     graph_emb = load_embeddings(args.graph_embeddings_file, key_transform=int, header=True)
 
     # Transform dataset
+    shape = next(iter(text_emb.values())).shape
+
     X, y = [], []
     with open(args.input_file, "r") as f:
         for line in f:
             line = line.split()
             src, tgt = int(line[0]), int(line[1])
+
+            if src in graph_emb:
+                src_graph = graph_emb[src]
+            else:
+                src_graph = np.random.normal(size=shape)
+
+            if tgt in graph_emb:
+                tgt_graph = graph_emb[tgt]
+            else:
+                tgt_graph = np.random.normal(size=shape)
+
             X.append(np.concatenate([text_emb[src], graph_emb[src],
                                      text_emb[tgt], graph_emb[tgt]], axis=None))
             if len(line) >= 3:
