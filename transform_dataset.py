@@ -47,8 +47,8 @@ if __name__ == "__main__":
             else:
                 tgt_graph = np.random.normal(size=shape)
 
-            X.append(np.concatenate([text_emb[src], graph_emb[src],
-                                     text_emb[tgt], graph_emb[tgt]], axis=None))
+            X.append(np.concatenate([text_emb[src], src_graph,
+                                     text_emb[tgt], tgt_graph], axis=None))
             if len(line) >= 3:
                 y.append(int(line[2]))
     X, y = np.array(X), np.array(y).ravel() if len(y) > 0 else None
