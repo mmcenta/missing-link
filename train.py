@@ -5,7 +5,7 @@ import xgboost as xgb
 from xgboost.sklearn import XGBClassifier
 from sklearn.metrics import accuracy_score
 
-from util.io import load_dataset
+from util.dataset_io import load_dataset
 
 parser = argparse.ArgumentParser(description='Train a xgboost model.')
 
