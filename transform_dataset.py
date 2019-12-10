@@ -2,6 +2,7 @@ import pickle
 import argparse
 import numpy as np
 from util.dataset_io import save_dataset
+from util.embeddings_io import load_embeddings
 
 parser = argparse.ArgumentParser(description='Transform the original dataset to use the precalculated embeddings.')
 
@@ -22,18 +23,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Load text embeddigns
-    with open(args.text_embeddings_file, "rb") as f:
-        text_emb = pickle.load(f)
+    text_emb = load_embeddings(args.text_embedding_file, key_transform=int)
 
     # Load graph embeddings
-    with open(args.graph_embeddings_file, "r") as f:
-        num_nodes, dim = tuple(map(int, f.readline().split()))
-        graph_emb = dict()
-        for line in f:
-            line = line.split()
-            node = int(line[0])
-            emb = np.array(list(map(float, line[1:])))
-            graph_emb[node] = emb
+    graph_emb = load_embeddings(args.graph_embeddings_file, key_transform=int, header=True)
 
     # Transform dataset
     X, y = [], []
@@ -41,8 +34,8 @@ if __name__ == "__main__":
         for line in f:
             line = line.split()
             src, tgt = int(line[0]), int(line[1])
-            X.append(np.concatenate([text_emb[src], graph_emb.get(src, np.zeros((dim,))),
-                                     text_emb[tgt], graph_emb.get(tgt, np.zeros((dim,)))], axis=None))
+            X.append(np.concatenate([text_emb[src], graph_emb[src],
+                                     text_emb[tgt], graph_emb[tgt]], axis=None))
             if len(line) >= 3:
                 y.append(int(line[2]))
     X, y = np.array(X), np.array(y).ravel() if len(y) > 0 else None

@@ -5,6 +5,7 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from .tokenizer import FullTokenizer
+from util.embeddings_io import save_embeddings_from_array
 
 def load_all_files(data_filepath):
     def _count_files(dir_path):
@@ -39,7 +40,7 @@ class Preprocessor:
         self.TEXT_PATH = os.path.join(self.NODES_PATH, "text")
         self.TOKENS_PATH = os.path.join(self.NODES_PATH, "tokens")
         self.URLS_PATH = os.path.join(self.NODES_PATH, "urls")
-        
+
         # Variables that store different parts of the processed documents
         self.file_text = load_all_files(self.TEXT_PATH)
         self.file_tokens = None
@@ -65,7 +66,7 @@ class Preprocessor:
             self.file_urls.append(urls)
 
         print('Finished tokenizing files.\nBegin saving...')
-        
+
         # Make tokens and urls directories
         os.makedirs(self.TOKENS_PATH, exist_ok=True)
         os.makedirs(self.URLS_PATH, exist_ok=True)
@@ -78,7 +79,7 @@ class Preprocessor:
                 tf.write('\n'.join(self.file_tokens[i]))
             with open(urls_file, 'w', encoding='utf-8') as uf:
                 uf.write('\n'.join(self.file_urls[i]))
-        
+
         print('Finished saving.')
 
     def tfidf_vectorize(self):
@@ -98,7 +99,7 @@ class Preprocessor:
         vectorizer_file = os.path.join(self.NODES_PATH,
                                        "tfidf_vectorizer.pickle")
         save_object(self.tfidf_vectorizer, vectorizer_file)
-        
+
         vocab_file = os.path.join(self.NODES_PATH,
                                   "tfidf_vocab.pickle")
         save_object(self.tfidf_vocab, vocab_file)
@@ -123,7 +124,7 @@ class Preprocessor:
         save_object(self.tsvd, tsvd_file)
 
         reduced_emb_file = os.path.join(self.NODES_PATH, "reduced_tfidf_emb.pickle")
-        save_object(self.reduced_tfidf_embeddings, reduced_emb_file)
+        save_embeddings_from_array(self.reduced_tfidf_embeddings, reduced_emb_file)
 
         print('Finished saving.')
 
