@@ -13,7 +13,7 @@ parser = argparse.ArgumentParser(description='Generate the edge list of the grap
 parser.add_argument('--input_file', required=True,
                     help='file containing the dataset')
 
-parser.add_argument('--ouput_file', default='./data/adjlist.txt',
+parser.add_argument('--output_file', default='./data/adjlist.txt',
                     help='file that will hold the resulting adjacency list')
 
 parser.add_argument('--embeddings_file',
