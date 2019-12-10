@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     print("Loading training datataset...")
 
-    X_train, y_train = load_dataset(args.train_name[0])
+    X_train, y_train = load_dataset(args.train_name)
 
     print("Done.\nTraining...")
 
