@@ -28,6 +28,7 @@ if __name__ == "__main__":
     # Load graph embeddings
     graph_emb = load_embeddings(args.graph_embeddings_file, key_transform=int, header=True)
 
+    print(text_emb)
     # Transform dataset
     shape = next(iter(text_emb.values())).shape
 
@@ -42,13 +43,23 @@ if __name__ == "__main__":
             else:
                 src_graph = np.random.normal(size=shape)
 
+            if src in text_emb:
+                src_text = text_emb[src]
+            else:
+                src_text = np.random.normal(size=shape)
+
             if tgt in graph_emb:
                 tgt_graph = graph_emb[tgt]
             else:
                 tgt_graph = np.random.normal(size=shape)
 
-            X.append(np.concatenate([text_emb[src], src_graph,
-                                     text_emb[tgt], tgt_graph], axis=None))
+            if tgt in text_emb:
+                tgt_text = text_emb[tgt]
+            else:
+                tgt_text = np.random.normal(size=shape)
+
+            X.append(np.concatenate([src_text, src_graph,
+                                     tgt_text, tgt_graph], axis=None))
             if len(line) >= 3:
                 y.append(int(line[2]))
     X, y = np.array(X), np.array(y).ravel() if len(y) > 0 else None
