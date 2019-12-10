@@ -36,7 +36,7 @@ if __name__ == "__main__":
         text_emb = load_embeddings(args.text_embeddings_file, key_transform=int)
 
     # Transform dataset
-    shape = next(iter(text_emb.values())).shape
+    shape = next(iter(graph_emb.values())).shape
 
     X, y = [], []
     with open(args.input_file, "r") as f:
