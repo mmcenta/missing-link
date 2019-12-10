@@ -44,13 +44,14 @@ if __name__ == "__main__":
             line = line.split()
             src, tgt = int(line[0]), int(line[1])
 
-            src_embedding = [_get_vector(src, graph_emb, shape)]
-            tgt_embedding = [_get_vector(tgt, graph_emb, shape)]
+            src_embedding = _get_vector(src, graph_emb, shape)
+            tgt_embedding = _get_vector(tgt, graph_emb, shape)
             if args.text_embeddings_file is not None:
-                src_embedding.append(_get_vector(src, text_emb, shape))
-                tgt_embedding.append(_get_vector(tgt, text_emb, shape))
+                src_embedding = np.concatenate([src_embedding, _get_vector(src, text_emb, shape)], axis=None)
+                tgt_embedding = np.concatenate([tgt_embedding, _get_vector(tgt, text_emb, shape)], axis=None)
 
-            X.append(np.concatenate(src_embedding + tgt_embedding, axis=None))
+            # Use the Hadamard operator to combine the two embeddings
+            X.append(np.multiply(src_embedding, tgt_embedding))
             if len(line) >= 3:
                 y.append(int(line[2]))
     X, y = np.array(X), np.array(y).ravel() if len(y) > 0 else None
