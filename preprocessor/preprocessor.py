@@ -10,9 +10,6 @@ from .doc2vec import Doc2VecVectorizer
 from util.embeddings_io import save_embeddings_from_array
 
 
-OUTPUT_DIM = 256
-
-
 def load_all_files(data_filepath):
     def _count_files(dir_path):
         return len([d for d in os.listdir(dir_path)
@@ -40,7 +37,7 @@ def save_object(obj, path):
 
 
 class Preprocessor:
-    def __init__(self, data_filepath='./data', use_tfidf=False, use_bert=False, use_doc2vec=False):
+    def __init__(self, data_filepath='./data', representation_size=256, use_tfidf=False, use_bert=False, use_doc2vec=False):
         self.DATA_PATH = data_filepath
         self.NODES_PATH = os.path.join(self.DATA_PATH, "node_information")
         self.TEXT_PATH = os.path.join(self.NODES_PATH, "text")
@@ -60,10 +57,10 @@ class Preprocessor:
                                                 encoding='utf-8',
                                                 lowercase=True)
         self.tfidf_vocab = None
-        self.tsvd = TruncatedSVD(n_components=OUTPUT_DIM)
+        self.tsvd = TruncatedSVD(n_components=representation_size)
         self.bert_vectorizer = BertVectorizer()
-        self.pca = PCA(n_components=OUTPUT_DIM)
-        self.doc2vec_vectorizer = Doc2VecVectorizer(n_components=OUTPUT_DIM)
+        self.pca = PCA(n_components=representation_size)
+        self.doc2vec_vectorizer = Doc2VecVectorizer(n_components=representation_size)
 
 
     def tokenize_all(self, file_text):
