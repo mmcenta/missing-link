@@ -16,4 +16,4 @@ class Doc2VecVectorizer:
 
         self.model.build_vocab(docs)
         self.model.train(docs, total_examples=self.model.corpus_count, epochs=self.model.epochs)
-        self.model.save_word2vec_format(filepath, doctag_vec=True, word_vec=False, binary=False)
+        self.model.save_word2vec_format(filepath, doctag_vec=True, word_vec=False, prefix='', binary=False)
