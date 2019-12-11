@@ -1,4 +1,5 @@
 import os
+import tqdm
 import numpy as np
 
 
@@ -7,14 +8,14 @@ def save_dataset(name, X, y=None):
 
     with open("/home/matheuscenta/missing-link/data/datasets/X_" + name + ".data", "w") as f:
         f.write(str(X.shape[0]) + " " + str(X.shape[1]) + "\n")
-        for x in X:
-            f.write(" ".join(list(map(str, x))) + "\n")
+        for i in tqdm(range(len(X.shape[0]))):
+            f.write(" ".join(list(map(str, X[i]))) + "\n")
 
     if y is not None:
         with open("/home/matheuscenta/missing-link/data/datasets/y_" + name + ".data", "wb") as f:
            f.write(str(y.shape[0]) + '\n')
-           for labels in y:
-               f.write(" ".join(list(map(str, labels))) + "\n")
+           for i in tqdm(range(len(y.shape[0]))):
+               f.write(" ".join(list(map(str, y[i]))) + "\n")
 
 
 def load_dataset(name):
