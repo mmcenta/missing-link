@@ -6,7 +6,7 @@ def save_dataset(name, X, y=None):
     os.makedirs('/home/matheuscenta/missing-link/data/datasets', exist_ok=True)
 
     with open("/home/matheuscenta/missing-link/data/datasets/X_" + name + ".data", "w") as f:
-        f.write(str(X.shape[0]) + " " + X.shape[1] + "\n")
+        f.write(str(X.shape[0]) + " " + str(X.shape[1]) + "\n")
         for x in X:
             f.write(" ".join(list(map(str, x))) + "\n")
 
