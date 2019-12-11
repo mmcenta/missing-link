@@ -3,6 +3,7 @@ from util.embeddings_io import load_embeddings, save_embeddings_from_dict
 embeddings = load_embeddings('./data/node_information/doc2vec.embeddings')
 
 for key in embeddings.keys():
+    print(key)
     x = embeddings[key]
     del embeddings[key]
     embeddings[int(key[-1])] = x
