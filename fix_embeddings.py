@@ -2,10 +2,10 @@ from util.embeddings_io import load_embeddings, save_embeddings_from_dict
 
 embeddings = load_embeddings('./data/node_information/doc2vec.embeddings')
 
-for key in embeddings.keys():
-    print(key)
-    x = embeddings[key]
-    del embeddings[key]
-    embeddings[int(key[-1])] = x
+fixed = dict()
 
-save_embeddings_from_dict(embeddings, './data/node_information/doc2vec_test.embeddings')
+for key, vector in embeddings.items():
+    key = int(key.split('*dt_')[1])
+    fixed[key] = vector
+
+save_embeddings_from_dict(fixed, './data/node_information/doc2vec_test.embeddings')
