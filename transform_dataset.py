@@ -18,7 +18,7 @@ parser.add_argument('--graph_embeddings_file', default=True,
 parser.add_argument('--text_embeddings_file',
                     help='name of the file containing the text embeddings')
 
-parser.add_argument('--concatenate', action='set_true',
+parser.add_argument('--concatenate', action='store_true',
                     help='if set, will concatenate the two embeddings instead of combining them')
 
 
