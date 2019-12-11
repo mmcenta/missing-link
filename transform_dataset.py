@@ -18,6 +18,9 @@ parser.add_argument('--graph_embeddings_file', default=True,
 parser.add_argument('--text_embeddings_file',
                     help='name of the file containing the text embeddings')
 
+parser.add_argument('--concatenate', action='set_true',
+                    help='if set, will concatenate the two embeddings instead of combining them')
+
 
 def _get_vector(key, embeddings, vec_shape):
     if key in embeddings:
@@ -50,8 +53,13 @@ if __name__ == "__main__":
                 src_embedding = np.concatenate([src_embedding, _get_vector(src, text_emb, shape)], axis=None)
                 tgt_embedding = np.concatenate([tgt_embedding, _get_vector(tgt, text_emb, shape)], axis=None)
 
-            # Use the Hadamard operator to combine the two embeddings
-            X.append(np.multiply(src_embedding, tgt_embedding))
+            if args.concatenate is None:
+                # Use the Hadamard operator to combine the two embeddings
+                X.append(np.multiply(src_embedding, tgt_embedding))
+            else:
+                # Concatenate the two embeddings
+                X.append(np.concatenate([src_embedding, text_emb], axis=None))
+
             if len(line) >= 3:
                 y.append(int(line[2]))
     X, y = np.array(X), np.array(y).ravel() if len(y) > 0 else None
