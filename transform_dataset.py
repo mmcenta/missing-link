@@ -58,7 +58,7 @@ if __name__ == "__main__":
                 X.append(np.multiply(src_embedding, tgt_embedding))
             else:
                 # Concatenate the two embeddings
-                X.append(np.concatenate([src_embedding, text_emb], axis=None))
+                X.append(np.concatenate([src_embedding, tgt_embedding], axis=None))
 
             if len(line) >= 3:
                 y.append(int(line[2]))
