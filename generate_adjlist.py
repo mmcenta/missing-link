@@ -30,30 +30,6 @@ def _count_files(dir_path):
                 if os.path.isfile(os.path.join(dir_path, d))])
 
 
-def _convert_embeddings_to_matrix(embeddings):
-    m = []
-    for idx in range(len(embeddings.keys())):
-        m.append(embeddings[idx])
-    return np.array(m)
-
-
-def _k_nearest_neighbours(k, node, num_nodes, dist_matrix):
-    heap = []
-
-    for adj in range(num_nodes):
-        if adj == node:
-            continue
-
-        dist = dist_matrix[node][adj]
-        if len(heap) == 0 or dist < -heap[0][0]:
-            heappush(heap, (-dist, adj))
-            if len(heap) > k:
-                heappop(heap)
-
-    heap.sort()
-    return [pair[1] for pair in heap]
-
-
 if __name__ == "__main__":
     args = parser.parse_args()
 
@@ -77,15 +53,10 @@ if __name__ == "__main__":
         # If a similarity embeddings were provided, link the num_potential_links
         # nearest neighbours to each node
 
-        #embeddings = _convert_embeddings_to_matrix(load_embeddings(args.embeddings_file, key_transform=int))
-        #dist_matrix = cosine_similarity(embeddings)
         kv = KeyedVectors.load_word2vec_format(args.embeddings_file)
-
         for node in trange(num_nodes):
-            #potential_links = _k_nearest_neighbours(args.num_potential_links,
-            #                                        node, num_nodes, dist_matrix)
-            potential_links = kv.most_similar(positive=[str(node)], topn=args.num_potential_links)
-
+            potential_links = [pair[0] for pair in kv.most_similar(positive=[str(node)],
+                                                                    topn=args.num_potential_links)]
             for adj in potential_links:
                 G.add_edge(node, adj)
 
