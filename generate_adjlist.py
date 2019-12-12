@@ -4,8 +4,7 @@ import pickle
 import numpy as np
 from networkx import DiGraph
 from gensim.models import KeyedVectors
-from sklearn.neighbors import KDTree
-from sklearn.preprocessing import normalize
+from sklearn.metrics.pairwise import cosine_similarity
 from tqdm import trange
 
 from util.embeddings_io import load_embeddings
@@ -25,7 +24,7 @@ parser.add_argument('--embeddings_file',
 parser.add_argument('--tfidf_file',
                     help='file containing the tfidf sparse vectors of each document')
 
-parser.add_argument('--num_potential_links', type=int, default=5,
+parser.add_argument('--k', type=int, default=5,
                     help='number of potential links to be added to the graph')
 
 
@@ -54,30 +53,21 @@ if __name__ == "__main__":
                 G.add_edge(src, tgt)
 
     if args.embeddings_file is not None:
-        # If a similarity embeddings were provided, link the num_potential_links
-        # nearest neighbours to each node
+        # If a similarity embeddings were provided, link the k nearest neighbours to each node
 
         kv = KeyedVectors.load_word2vec_format(args.embeddings_file)
         for node in trange(num_nodes):
-            potential_links = [int(pair[0]) for pair in kv.most_similar(positive=[str(node)],
-                                                                        topn=args.num_potential_links)]
+            potential_links = [int(pair[0]) for pair in kv.most_similar(positive=[str(node)], topn=args.k)]
             for adj in potential_links:
                 G.add_edge(node, adj)
 
     if args.tfidf_file is not None:
         with open(args.tfidf_file, "rb") as f:
             embeddings = pickle.load(f)
-        print(len(embeddings))
-        seen = set()
-        for x in embeddings:
-            if len(x) not in seen:
-                print(len(x))
-                seen.add(len(x))
 
-        normalize(embeddings, copy=False)
-        tree = KDTree(embeddings)
+        dist_matrix = cosine_similarity(embeddings)
         for node in trange(num_nodes):
-            potential_links = tree.query(embeddings[node], k=args.num_potential_links, return_distance=False)
+            potential_links = np.argpartition(dist_matrix[node], -args.k)[-args.k:]
             for adj in potential_links:
                 G.add_edge(node, adj)
 
