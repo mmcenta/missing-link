@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
         #embeddings = _convert_embeddings_to_matrix(load_embeddings(args.embeddings_file, key_transform=int))
         #dist_matrix = cosine_similarity(embeddings)
-        kv = KeyedVectors.load(args.embeddings_file)
+        kv = KeyedVectors.load_word2vec_format(args.embeddings_file)
 
         for node in range(num_nodes):
             #potential_links = _k_nearest_neighbours(args.num_potential_links,
