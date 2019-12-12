@@ -32,7 +32,7 @@ if __name__ == "__main__":
     print("Done.\nTraining...")
 
 
-    model = LogisticRegression(verbose=1, C=args.C, n_jobs=4, solver='saga')
+    model = LogisticRegression(verbose=0, C=args.C, n_jobs=4, solver='saga')
     model.fit(X_train, y_train)
 
     print("Done.\nSaving...")
