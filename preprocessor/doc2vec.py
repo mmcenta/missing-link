@@ -1,8 +1,8 @@
+import os
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
 class Doc2VecVectorizer:
     def __init__(self, n_components=256, window_size=10):
-        print(n_components)
         self.model = Doc2Vec(dm=1,
                              hs=1,
                              vector_size=n_components,
@@ -13,8 +13,10 @@ class Doc2VecVectorizer:
                              workers=4)
 
     def transform_save(self, file_tokens, filepath):
-        docs = [TaggedDocument(" ".join(t), [i]) for i, t in enumerate(file_tokens)]
+        if os.path.exists(filepath):
+            os.remove(filepath)
 
+        docs = [TaggedDocument(" ".join(t), [i]) for i, t in enumerate(file_tokens)]
         self.model.build_vocab(docs)
         self.model.train(docs, total_examples=self.model.corpus_count, epochs=self.model.epochs)
         self.model.save_word2vec_format(filepath, doctag_vec=True, word_vec=False, prefix='', binary=False)
