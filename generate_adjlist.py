@@ -30,11 +30,7 @@ def _count_files(dir_path):
 
 def _convert_embeddings_to_matrix(embeddings):
     m = []
-    shape = next(iter(embeddings.values())).shape
-    print(shape)
     for idx in range(len(embeddings.keys())):
-        print(embeddings[idx].shape)
-        assert(embeddings[idx].shape == shape)
         m.append(embeddings[idx])
     return np.array(m)
 
