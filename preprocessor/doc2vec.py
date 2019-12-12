@@ -2,6 +2,7 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
 class Doc2VecVectorizer:
     def __init__(self, n_components=256, window_size=10):
+        print(n_components)
         self.model = Doc2Vec(dm=1,
                              hs=1,
                              vector_size=n_components,
