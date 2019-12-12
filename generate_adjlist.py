@@ -4,6 +4,7 @@ import numpy as np
 from heapq import heappush, heappop
 from networkx import DiGraph
 from sklearn.metrics.pairwise import cosine_similarity
+from gensim.models import KeyedVectors
 
 from util.embeddings_io import load_embeddings
 
@@ -75,12 +76,15 @@ if __name__ == "__main__":
         # If a similarity embeddings were provided, link the num_potential_links
         # nearest neighbours to each node
 
-        embeddings = _convert_embeddings_to_matrix(load_embeddings(args.embeddings_file, key_transform=int))
-        dist_matrix = cosine_similarity(embeddings)
+        #embeddings = _convert_embeddings_to_matrix(load_embeddings(args.embeddings_file, key_transform=int))
+        #dist_matrix = cosine_similarity(embeddings)
+        kv = KeyedVectors.load(args.embeddings_file)
 
         for node in range(num_nodes):
-            potential_links = _k_nearest_neighbours(args.num_potential_links,
-                                                    node, num_nodes, dist_matrix)
+            #potential_links = _k_nearest_neighbours(args.num_potential_links,
+            #                                        node, num_nodes, dist_matrix)
+            potential_links = kv.most_similar(positive=[str(node)], topn=args.num_potential_links)
+
             for adj in potential_links:
                 G.add_edge(node, adj)
 
