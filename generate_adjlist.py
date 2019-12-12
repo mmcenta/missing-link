@@ -5,6 +5,7 @@ from heapq import heappush, heappop
 from networkx import DiGraph
 from sklearn.metrics.pairwise import cosine_similarity
 from gensim.models import KeyedVectors
+from tqdm import trange
 
 from util.embeddings_io import load_embeddings
 
@@ -80,7 +81,7 @@ if __name__ == "__main__":
         #dist_matrix = cosine_similarity(embeddings)
         kv = KeyedVectors.load_word2vec_format(args.embeddings_file)
 
-        for node in range(num_nodes):
+        for node in trange(num_nodes):
             #potential_links = _k_nearest_neighbours(args.num_potential_links,
             #                                        node, num_nodes, dist_matrix)
             potential_links = kv.most_similar(positive=[str(node)], topn=args.num_potential_links)
@@ -92,6 +93,7 @@ if __name__ == "__main__":
     with open(args.output_file, "w") as f:
         adjlist = G.adjacency()
         for node, adj in adjlist:
+            print(adj.keys())
             line = " ".join([str(node)] + list(map(str, sorted(adj.keys()))))
             f.write(line + '\n')
 
