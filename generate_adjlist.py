@@ -55,8 +55,8 @@ if __name__ == "__main__":
 
         kv = KeyedVectors.load_word2vec_format(args.embeddings_file)
         for node in trange(num_nodes):
-            potential_links = [pair[0] for pair in kv.most_similar(positive=[str(node)],
-                                                                    topn=args.num_potential_links)]
+            potential_links = [int(pair[0]) for pair in kv.most_similar(positive=[str(node)],
+                                                                        topn=args.num_potential_links)]
             for adj in potential_links:
                 G.add_edge(node, adj)
 
@@ -64,7 +64,6 @@ if __name__ == "__main__":
     with open(args.output_file, "w") as f:
         adjlist = G.adjacency()
         for node, adj in adjlist:
-            print(adj.keys())
             line = " ".join([str(node)] + list(map(str, sorted(adj.keys()))))
             f.write(line + '\n')
 
