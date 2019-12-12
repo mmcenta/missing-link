@@ -31,7 +31,7 @@ def load_embeddings(filepath, key_transform=None, vector_transform=float, header
         for line in f:
             line = line.split()
             if len(line) < dim:
-                print(line)
+                print(len(line), dim)
             key = line[0] if key_transform is None else key_transform(line[0])
             vector = np.array(list(map(vector_transform, line[1:])))
             embeddings[key] = vector
