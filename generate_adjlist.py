@@ -1,10 +1,11 @@
 import os
 import argparse
+import pickle
 import numpy as np
-from heapq import heappush, heappop
 from networkx import DiGraph
-from sklearn.metrics.pairwise import cosine_similarity
 from gensim.models import KeyedVectors
+from sklearn.neighbors import KDTree
+from sklearn.preprocessing import normalize
 from tqdm import trange
 
 from util.embeddings_io import load_embeddings
@@ -20,6 +21,9 @@ parser.add_argument('--output_file', default='./data/adjlist.txt',
 
 parser.add_argument('--embeddings_file',
                     help='file containing the similarity embeddings between nodes')
+
+parser.add_argument('--tfidf_file',
+                    help='file containing the tfidf sparse vectors of each document')
 
 parser.add_argument('--num_potential_links', type=int, default=5,
                     help='number of potential links to be added to the graph')
@@ -59,6 +63,18 @@ if __name__ == "__main__":
                                                                         topn=args.num_potential_links)]
             for adj in potential_links:
                 G.add_edge(node, adj)
+
+    if args.tfidf_file is not None:
+        with open(args.tfidf_file, "rb") as f:
+            embeddings = pickle.load(f)
+
+        normalize(embeddings, copy=False)
+        tree = KDTree(embeddings)
+        for node in trange(num_nodes):
+            potential_links = tree.query(embeddings[node], k=args.num_potential_links, return_distance=False)
+            for adj in potential_links:
+                G.add_edge(node, adj)
+
 
     # Save the adjacency list
     with open(args.output_file, "w") as f:
