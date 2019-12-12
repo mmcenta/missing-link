@@ -67,6 +67,12 @@ if __name__ == "__main__":
     if args.tfidf_file is not None:
         with open(args.tfidf_file, "rb") as f:
             embeddings = pickle.load(f)
+        print(len(embeddings))
+        seen = set()
+        for x in embeddings:
+            if len(x) not in seen:
+                print(len(x))
+                seen.add(len(x))
 
         normalize(embeddings, copy=False)
         tree = KDTree(embeddings)
