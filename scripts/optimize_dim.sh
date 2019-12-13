@@ -1,4 +1,3 @@
-sudo python3 preprocess_text.py --representation_size 64 --use_tfidf --use_doc2vec
 deepwalk --format adjlist --input ./data/train_adjlist.txt --number-walks 10 --representation-size 64 --walk-length 40 --window-size 2 --workers 16 --output ./data/node_information/deepwalk.embeddings
 sudo python3 transform_dataset.py --input_file ./data/train.txt --output_name tmp  --graph_embeddings_file ./data/node_information/deepwalk.embeddings --concatenate
 sudo python3 transform_dataset.py --input_file ./data/val.txt --output_name tmp_val  --graph_embeddings_file ./data/node_information/deepwalk.embeddings --concatenate
