@@ -32,10 +32,12 @@ parser.add_argument('--jobs', type=int, default=1,
 param_type = {
     "n_estimators": int,
     "max_depth": int,
+    "min_child_weight": int,
     "learning_rate": float,
     "colsample_bytree": float,
     "subsample": float,
-    "gamma": float
+    "gamma": float,
+    "scale_pos_weight": float,
 }
 
 
@@ -64,15 +66,13 @@ if __name__ == "__main__":
     if not args.gpu:
         model = XGBClassifier(silent=False,
                               scale_pos_weight=1,
-                              objective='binary:logistic',
-                              reg_alpha=0.3)
+                              objective='binary:logistic')
     else:
         model = XGBClassifier(tree_method="gpu_hist",
                               gpu_id=0,
                               silent=False,
                               scale_pos_weight=1,
-                              objective='binary:logistic',
-                              reg_alpha=0.3)
+                              objective='binary:logistic')
 
     gsearch = GridSearchCV(model, search_space, scoring='accuracy', n_jobs=args.jobs, verbose=2)
     gsearch.fit(X_train, y_train)
