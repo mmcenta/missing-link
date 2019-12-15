@@ -1,6 +1,18 @@
-python3 train.py --train_name train --val_name val --model_name e1000d3 --n_estimators 1000 --max_depth 3 --gpu
-python3 train.py --train_name train --val_name val --model_name e1000d5 --n_estimators 1000 --max_depth 5 --gpu
-python3 train.py --train_name train --val_name val --model_name e1000d8 --n_estimators 1000 --max_depth 8 --gpu
-python3 train.py --train_name train --val_name val --model_name e1000d10 --n_estimators 1000 --max_depth 10 --gpu
-python3 train.py --train_name train --val_name val --model_name e1000d16 --n_estimators 1000 --max_depth 16 --gpu
-python3 train.py --train_name train --val_name val --model_name e1000d32 --n_estimators 1000 --max_depth 32 --gpu
+sudo python3 train_xgboost.py --train_name concat_train --val_name concat_val --n_estimators 512 --max_depth 3 --learning_rate 0.1 --subsample 0.8 --colsample_bytree 0.8 --gamma 0 --scale_pos_weight 1 --min_child_weight 1 --gpu
+sudo python3 train_xgboost.py --train_name concat_train --val_name concat_val --n_estimators 512 --max_depth 4 --learning_rate 0.1 --subsample 0.8 --colsample_bytree 0.8 --gamma 0 --scale_pos_weight 1 --min_child_weight 1 --gpu
+sudo python3 train_xgboost.py --train_name concat_train --val_name concat_val --n_estimators 512 --max_depth 8 --learning_rate 0.1 --subsample 0.8 --colsample_bytree 0.8 --gamma 0 --scale_pos_weight 1 --min_child_weight 1 --gpu
+sudo python3 train_xgboost.py --train_name concat_train --val_name concat_val --n_estimators 512 --max_depth 12 --learning_rate 0.1 --subsample 0.8 --colsample_bytree 0.8 --gamma 0 --scale_pos_weight 1 --min_child_weight 1 --gpu
+sudo python3 train_xgboost.py --train_name concat_train --val_name concat_val --n_estimators 512 --max_depth 16 --learning_rate 0.1 --subsample 0.8 --colsample_bytree 0.8 --gamma 0 --scale_pos_weight 1 --min_child_weight 1 --gpu
+
+sudo python3 train_xgboost.py --train_name concat_train --val_name concat_val --n_estimators 512 --max_depth 3 --learning_rate 0.1 --subsample 0.8 --colsample_bytree 0.8 --gamma 0 --scale_pos_weight 1 --min_child_weight 3 --gpu
+sudo python3 train_xgboost.py --train_name concat_train --val_name concat_val --n_estimators 512 --max_depth 4 --learning_rate 0.1 --subsample 0.8 --colsample_bytree 0.8 --gamma 0 --scale_pos_weight 1 --min_child_weight 3 --gpu
+sudo python3 train_xgboost.py --train_name concat_train --val_name concat_val --n_estimators 512 --max_depth 8 --learning_rate 0.1 --subsample 0.8 --colsample_bytree 0.8 --gamma 0 --scale_pos_weight 1 --min_child_weight 3 --gpu
+sudo python3 train_xgboost.py --train_name concat_train --val_name concat_val --n_estimators 512 --max_depth 12 --learning_rate 0.1 --subsample 0.8 --colsample_bytree 0.8 --gamma 0 --scale_pos_weight 1 --min_child_weight 3 --gpu
+sudo python3 train_xgboost.py --train_name concat_train --val_name concat_val --n_estimators 512 --max_depth 16 --learning_rate 0.1 --subsample 0.8 --colsample_bytree 0.8 --gamma 0 --scale_pos_weight 1 --min_child_weight 3 --gpu
+
+sudo python3 train_xgboost.py --train_name concat_train --val_name concat_val --n_estimators 512 --max_depth 3 --learning_rate 0.1 --subsample 0.8 --colsample_bytree 0.8 --gamma 0 --scale_pos_weight 1 --min_child_weight 5 --gpu
+sudo python3 train_xgboost.py --train_name concat_train --val_name concat_val --n_estimators 512 --max_depth 4 --learning_rate 0.1 --subsample 0.8 --colsample_bytree 0.8 --gamma 0 --scale_pos_weight 1 --min_child_weight 5 --gpu
+sudo python3 train_xgboost.py --train_name concat_train --val_name concat_val --n_estimators 512 --max_depth 8 --learning_rate 0.1 --subsample 0.8 --colsample_bytree 0.8 --gamma 0 --scale_pos_weight 1 --min_child_weight 5 --gpu
+sudo python3 train_xgboost.py --train_name concat_train --val_name concat_val --n_estimators 512 --max_depth 12 --learning_rate 0.1 --subsample 0.8 --colsample_bytree 0.8 --gamma 0 --scale_pos_weight 1 --min_child_weight 5 --gpu
+sudo python3 train_xgboost.py --train_name concat_train --val_name concat_val --n_estimators 512 --max_depth 16 --learning_rate 0.1 --subsample 0.8 --colsample_bytree 0.8 --gamma 0 --scale_pos_weight 1 --min_child_weight 5 --gpu
+
