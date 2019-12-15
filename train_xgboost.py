@@ -39,6 +39,10 @@ parser.add_argument('--colsample_bytree', type=float, default=0.8,
 parser.add_argument('--gamma', type=float, default=0,
                     help='minimum loss reduction required to make a further partition on a leaf node of the tree')
 
+parser.add_argument('--scale_pos_weight', type=float, default=1.0)
+
+parser.add_argument('--min_child_weight', type=int, default=1)
+
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -51,20 +55,21 @@ if __name__ == "__main__":
 
     if not args.gpu:
         model = XGBClassifier(silent=False,
-                              scale_pos_weight=1,
+                              scale_pos_weight=args.scale_pos_weight,
+                              min_child_weight=args.min_child_weight,
                               learning_rate=args.learning_rate,
                               colsample_bytree=args.colsample_bytree,
                               subsample=args.subsample,
                               objective='binary:logistic',
                               n_estimators=args.n_estimators,
-                              reg_alpha=0.3,
                               max_depth=args.max_depth,
                               gamma=args.gamma)
     else:
         model = XGBClassifier(tree_method="gpu_hist",
                               gpu_id=0,
                               silent=False,
-                              scale_pos_weight=1,
+                              scale_pos_weight=args.scale_pos_weight,
+                              min_child_weight=args.min_child_weight,
                               learning_rate=args.learning_rate,
                               colsample_bytree=args.colsample_bytree,
                               subsample=args.subsample,
