@@ -90,9 +90,14 @@ if __name__ == "__main__":
     if args.val_name is not None:
         print("Validating...")
 
+        X_train, y_train = load_dataset(args.val_name)
+        preds = model.predict(X_train)
+        pred_labels = np.rint(preds)
+        print("\ttrain accuracy:", accuracy_score(y_train, pred_labels))
+
         X_val, y_val = load_dataset(args.val_name)
         preds = model.predict(X_val)
         pred_labels = np.rint(preds)
-        print("\taccuracy:", accuracy_score(y_val, pred_labels))
+        print("\tval accuracy:", accuracy_score(y_val, pred_labels))
 
         print("Done.")
