@@ -1,8 +1,8 @@
-n_estimators 64 128 256 512 1024
-max_depth 5
+n_estimators 512
+max_depth 12
 learning_rate 0.1
-subsample 0.8
-colsample_bytree 0.8
+subsample 0.3 0.5 0.7 0.9
+colsample_bytree 0.3 0.5 0.7 0.9
 gamma 0
 scale_pos_weight 1
-min_child_weight 1
+min_child_weight 5
