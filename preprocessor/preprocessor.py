@@ -37,15 +37,15 @@ def save_object(obj, path):
 
 
 class Preprocessor:
-    def __init__(self, data_filepath='./data', representation_size=256, use_tfidf=False, use_bert=False, use_doc2vec=False):
+    def __init__(self, data_filepath='./data', representation_size=256, use_tfidf=False, use_doc2vec=False):
         self.DATA_PATH = data_filepath
         self.NODES_PATH = os.path.join(self.DATA_PATH, "node_information")
         self.TEXT_PATH = os.path.join(self.NODES_PATH, "text")
         self.TOKENS_PATH = os.path.join(self.NODES_PATH, "tokens")
         self.URLS_PATH = os.path.join(self.NODES_PATH, "urls")
+        self.CONTEXTS_PATH = os.path.join(self.NODES_PATH, "contexts")
 
         self.use_tfidf = use_tfidf
-        self.use_bert = use_bert
         self.use_doc2vec = use_doc2vec
 
         # Variables that store different parts of the processed documents
@@ -69,16 +69,19 @@ class Preprocessor:
         # Tokenize each file
         file_urls = []
         file_tokens = []
+        file_contexts = []
         for file in tqdm(file_text):
-            tokens, urls = self.tokenizer.tokenize(file)
+            tokens, urls, contexts = self.tokenizer.tokenize(file)
             file_tokens.append(tokens)
             file_urls.append(urls)
+            file_contexts.append(contexts)
 
         print('Done.\nSaving...')
 
         # Make tokens and urls directories
         os.makedirs(self.TOKENS_PATH, exist_ok=True)
         os.makedirs(self.URLS_PATH, exist_ok=True)
+        os.makedirs(self.CONTEXTS_PATH, exist_ok=True)
 
         # Save tokens and urls
         for i in tqdm(range(len(self.file_text))):
@@ -89,6 +92,10 @@ class Preprocessor:
             urls_file = os.path.join(self.URLS_PATH, str(i) + ".txt")
             with open(urls_file, 'w', encoding='utf-8') as uf:
                 uf.write('\n'.join(file_urls[i]))
+
+            contexts_file = os.path.join(self.CONTEXTS_PATH, str(i) + ".txt")
+            with open(contexts_file, 'w', encoding='utf-8') as cf:
+                cf.write('\n'.join(file_contexts[i]))
 
         print('Done.')
 
@@ -131,20 +138,6 @@ class Preprocessor:
         print('Done.')
 
         return reduced_embeddings
-
-    def bert_vectorize(self, file_tokens):
-        print('Perform BERT vectorization...')
-
-        docs = ['\n'.join(t) for t in file_tokens]
-        full_embeddings = self.bert_vectorizer.transform(docs)
-
-        print('Done.\nSaving...')
-
-        # Save full size embeddings
-        emb_file = os.path.join(self.NODES_PATH, "bert_embeddings.pickle")
-        save_object(full_embeddings, emb_file)
-
-        print('Done.')
 
     def reduce_embeddings(self, full_embeddings):
         print('Perform dimensionality reduction on embeddings...')

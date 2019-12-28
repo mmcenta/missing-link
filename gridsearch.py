@@ -85,7 +85,7 @@ if __name__ == "__main__":
     print("Saving best model...")
 
     with open("./models/" + args.model_name + ".pickle", "wb") as f:
-        pickle.dump(gsearch.best_estimator_, f)
+        pickle.dump(gsearch, f)
 
     print("Done.")
 
