@@ -43,6 +43,8 @@ parser.add_argument('--scale_pos_weight', type=float, default=1.0)
 
 parser.add_argument('--min_child_weight', type=int, default=1)
 
+parser.add_argument('--reg_alpha', type=float, default=0.0)
+
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -62,6 +64,7 @@ if __name__ == "__main__":
                               subsample=args.subsample,
                               objective='binary:logistic',
                               n_estimators=args.n_estimators,
+                              reg_alpha=args.reg_alpha,
                               max_depth=args.max_depth,
                               gamma=args.gamma)
     else:
@@ -75,7 +78,7 @@ if __name__ == "__main__":
                               subsample=args.subsample,
                               objective='binary:logistic',
                               n_estimators=args.n_estimators,
-                              reg_alpha=0.3,
+                              reg_alpha=args.reg_alpha,
                               max_depth=args.max_depth,
                               gamma=args.gamma)
     model.fit(X_train, y_train)
