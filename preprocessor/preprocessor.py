@@ -91,8 +91,7 @@ class Preprocessor:
 
             urls_file = os.path.join(self.URLS_PATH, str(i) + ".txt")
             with open(urls_file, 'w', encoding='utf-8') as uf:
-                uf.write('\n'.join(file_urls[i]))
-
+                uf.write('\n'.join(file_urls[i
             contexts_file = os.path.join(self.CONTEXTS_PATH, str(i) + ".txt")
             with open(contexts_file, 'w', encoding='utf-8') as cf:
                 cf.write('\n'.join(file_contexts[i]))
